@@ -565,3 +565,9 @@ Returns the list of the packages which have `update.ps1` script in its directory
 Helper scripts to make maintaining packages using AU even easier
 - [Chocolatey Core Community Maintainers Team Packages](https://github.com/chocolatey/chocolatey-coreteampackages)
 The [largest](https://gist.github.com/choco-bot/a14b1e5bfaf70839b338eb1ab7f8226f) repository of AU packages by far
+
+## Repository
+
+### Labels
+
+The labels for this repository are synchronized from the [`chocolatey/.github`](https://github.com/chocolatey/.github) repository. Any labels not part of that configuration will be deleted. If you need to create additional labels, please follow the instructions for doing so over in that repository.
