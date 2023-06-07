@@ -350,11 +350,11 @@ PS> Get-Version 'v1.3.2.7rc1'
 
 Version Prerelease BuildMetadata
 ------- ---------- -------------
-1.3.2.7 rc1
+1.3.2.7 rc.1
 
-PS> $version = Get-Version '1.3.2-beta2+5'
+PS> $version = Get-Version '1.3.2-beta.2+5'
 PS> $version.ToString(2) + ' => ' + $version.ToString()
-1.3 => 1.3.2-beta2+5
+1.3 => 1.3.2-beta.2+5
 ```
 
 ### WhatIf

@@ -5,8 +5,8 @@ class AUVersion : System.IComparable {
 
     AUVersion([version] $version, [string] $prerelease, [string] $buildMetadata) {
         if (!$version) { throw 'Version cannot be null.' }
-        $this.Version = $version
-        $this.Prerelease = $prerelease
+        $this.Version = [AUVersion]::NormalizeVersion($version)
+        $this.Prerelease = [AUVersion]::NormalizePrerelease($prerelease) -join '.'
         $this.BuildMetadata = $buildMetadata
     }
 
@@ -35,19 +35,38 @@ class AUVersion : System.IComparable {
         $pattern = [AUVersion]::GetPattern($strict)
         if ($input -notmatch $pattern) { return $false }
         $reference = [ref] $null
-        if (![version]::TryParse($Matches['version'], $reference)) { return $false }
-        $pr = $Matches['prerelease']
-        $bm = $Matches['buildMetadata']
-        if ($pr -and !$strict) { $pr = $pr.Replace(' ', '.') }
-        if ($bm -and !$strict) { $bm = $bm.Replace(' ', '.') }
-        # for now, chocolatey does only support SemVer v1 (no dot separated identifiers in pre-release):
-        if ($pr -and $strict -and $pr -like '*.*') { return $false }
-        if ($bm -and $strict -and $bm -like '*.*') { return $false }
-        if ($pr) { $pr = $pr.Replace('.', '') }
-        if ($bm) { $bm = $bm.Replace('.', '') }
-        #
+        if (![version]::TryParse($Matches.version, $reference)) { return $false }
+        $pr = $Matches.prerelease
+        $bm = $Matches.buildMetadata
+        if ($pr -and !$strict) { $pr = [AUVersion]::RefineParts($pr) }
+        if ($bm -and !$strict) { $bm = [AUVersion]::RefineParts($bm) }
         $result.Value = [AUVersion]::new($reference.Value, $pr, $bm)
         return $true
+    }
+
+    hidden static [version] NormalizeVersion([version] $value) {
+        if ($value.Revision -eq 0) {
+            return $value.ToString(3)
+        }
+        if ($value.Build -eq -1) {
+            return [version] "$value.0"
+        }
+        return $value
+    }
+
+    hidden static [object[]] NormalizePrerelease([string] $value) {
+        $result = @()
+        if ($value) {
+            $value -split '\.' | ForEach-Object {
+                # if identifier is exclusively numeric, cast it to an int
+                if ($_ -match '^[0-9]+$') {
+                    $result += [int] $_
+                } else {
+                    $result += $_
+                }
+            }
+        }
+        return $result
     }
 
     hidden static [string] GetPattern([bool] $strict) {
@@ -61,13 +80,22 @@ class AUVersion : System.IComparable {
         }
     }
 
+    hidden static [string] RefineParts([string] $value) {
+        $result = if ($value -match '^(?<identifier>[A-Za-z]+)(?<digits>\d+)$') {
+            '{0}.{1}' -f $Matches.identifier, $Matches.digits
+        } else {
+            $value.Replace(' ', '.')
+        }
+        return $result
+    }
+
     [AUVersion] WithVersion([version] $version) { return [AUVersion]::new($version, $this.Prerelease, $this.BuildMetadata) }
 
     [int] CompareTo($obj) {
         if ($obj -eq $null) { return 1 }
         if ($obj -isnot [AUVersion]) { throw "AUVersion expected: $($obj.GetType())" }
-        $t = $this.GetParts()
-        $o = $obj.GetParts()
+        $t = $this.GetAllParts()
+        $o = $obj.GetAllParts()
         for ($i = 0; $i -lt $t.Length -and $i -lt $o.Length; $i++) {
             if ($t[$i].GetType() -ne $o[$i].GetType()) {
                 $t[$i] = [string] $t[$i]
@@ -85,7 +113,7 @@ class AUVersion : System.IComparable {
 
     [bool] Equals($obj) { return $this.CompareTo($obj) -eq 0 }
 
-    [int] GetHashCode() { return $this.GetParts().GetHashCode() }
+    [int] GetHashCode() { return $this.GetAllParts().GetHashCode() }
 
     [string] ToString() {
         $result = $this.Version.ToString()
@@ -99,18 +127,9 @@ class AUVersion : System.IComparable {
         return $this.Version.ToString($fieldCount)
     }
 
-    hidden [object[]] GetParts() {
-        $result = @($this.Version)
-        if ($this.Prerelease) {
-            $this.Prerelease -split '\.' | ForEach-Object {
-                # if identifier is exclusively numeric, cast it to an int
-                if ($_ -match '^[0-9]+$') {
-                    $result += [int] $_
-                } else {
-                    $result += $_
-                }
-            }
-        }
+    hidden [object[]] GetAllParts() {
+        $result = , $this.Version
+        $result += [AUVersion]::NormalizePrerelease($this.Prerelease)
         return $result
     }
 }
