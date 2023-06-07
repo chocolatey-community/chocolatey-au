@@ -19,12 +19,12 @@
 .EXAMPLE
     Get-Version 'Last version: 1.2.3 beta 3.'
 
-    Returns 1.2.3-beta3
+    Returns 1.2.3-beta.3
 
 .EXAMPLE
     Get-Version 'https://github.com/atom/atom/releases/download/v1.24.0-beta2/AtomSetup.exe'
 
-    Return 1.24.0-beta2
+    Return 1.24.0-beta.2
 
 .EXAMPLE
     Get-Version 'http://mirrors.kodi.tv/releases/windows/win32/kodi-17.6-Krypton-x86.exe' -Delimiter '-'
