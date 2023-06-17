@@ -346,13 +346,13 @@ In order to help working with versions, function `Get-Version` can be called in 
 - To force the update of the single stream, use `IncludeStream` parameter. To do so via commit message, use `[AU package\stream]` syntax.
 
 ```powershell
-PS> Get-Version 'v1.3.2.7rc1'
+PS> Get-Version 'v1.3.2.7rc.1'
 
 Version Prerelease BuildMetadata
 ------- ---------- -------------
-1.3.2.7 rc.1
+1.3.2.7 rc1
 
-PS> $version = Get-Version '1.3.2-beta.2+5'
+PS> $version = Get-Version -SemVer V2 '1.3.2-beta.2+5'
 PS> $version.ToString(2) + ' => ' + $version.ToString()
 1.3 => 1.3.2-beta.2+5
 ```

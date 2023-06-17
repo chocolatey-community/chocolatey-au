@@ -1,55 +1,75 @@
+enum SemVer {
+    V1
+    V2
+    EnhancedV2
+}
+
 class AUVersion : System.IComparable {
     [version] $Version
     [string] $Prerelease
     [string] $BuildMetadata
 
-    AUVersion([version] $version, [string] $prerelease, [string] $buildMetadata) {
+    hidden AUVersion([version] $version, [string] $prerelease, [string] $buildMetadata) {
         if (!$version) { throw 'Version cannot be null.' }
-        $this.Version = [AUVersion]::NormalizeVersion($version)
-        $this.Prerelease = [AUVersion]::NormalizePrerelease($prerelease) -join '.'
+        $this.Version       = [AUVersion]::NormalizeVersion($version)
+        $this.Prerelease    = [AUVersion]::NormalizePrerelease($prerelease) -join '.'
         $this.BuildMetadata = $buildMetadata
     }
 
-    AUVersion($input) {
-        if (!$input) { throw 'Input cannot be null.' }
-        $v = [AUVersion]::Parse($input -as [string])
-        $this.Version = $v.Version
-        $this.Prerelease = $v.Prerelease
+    AUVersion($value) {
+        if (!$value) { throw 'Input cannot be null.' }
+        $v = [AUVersion]::Parse($value -as [string])
+        $this.Version       = $v.Version
+        $this.Prerelease    = $v.Prerelease
         $this.BuildMetadata = $v.BuildMetadata
     }
 
-    static [AUVersion] Parse([string] $input) { return [AUVersion]::Parse($input, $true) }
-
-    static [AUVersion] Parse([string] $input, [bool] $strict) {
-        if (!$input) { throw 'Version cannot be null.' }
-        $reference = [ref] $null
-        if (![AUVersion]::TryParse($input, $reference, $strict)) { throw "Invalid version: $input." }
-        return $reference.Value
+    static [AUVersion] Parse([string] $value) {
+        return [AUVersion]::Parse($value, $true)
     }
 
-    static [bool] TryParse([string] $input, [ref] $result) { return [AUVersion]::TryParse($input, $result, $true) }
+    static [AUVersion] Parse([string] $value, [bool] $strict) {
+        return [AUVersion]::Parse($value, $strict, [SemVer]::V2)
+    }
 
-    static [bool] TryParse([string] $input, [ref] $result, [bool] $strict) {
+    static [AUVersion] Parse([string] $value, [bool] $strict, [SemVer] $semver) {
+        if (!$value) { throw 'Version cannot be null.' }
+        $v = [ref] $null
+        if (![AUVersion]::TryParse($value, $v, $strict, $semver)) {
+            throw "Invalid SemVer $semver version: `"$value`"."
+        }
+        return $v.Value
+    }
+
+    static [bool] TryParse([string] $value, [ref] $result) {
+        return [AUVersion]::TryParse($value, $result, $true)
+    }
+
+    static [bool] TryParse([string] $value, [ref] $result, [bool] $strict) {
+        return [AUVersion]::TryParse($value, $result, $strict, [SemVer]::V2)
+    }
+
+    static [bool] TryParse([string] $value, [ref] $result, [bool] $strict, [SemVer] $semver) {
         $result.Value = [AUVersion] $null
-        if (!$input) { return $false }
+        if (!$value) { return $false }
         $pattern = [AUVersion]::GetPattern($strict)
-        if ($input -notmatch $pattern) { return $false }
-        $reference = [ref] $null
-        if (![version]::TryParse($Matches.version, $reference)) { return $false }
-        $pr = $Matches.prerelease
-        $bm = $Matches.buildMetadata
-        if ($pr -and !$strict) { $pr = [AUVersion]::RefineParts($pr) }
-        if ($bm -and !$strict) { $bm = [AUVersion]::RefineParts($bm) }
-        $result.Value = [AUVersion]::new($reference.Value, $pr, $bm)
+        if ($value -notmatch $pattern) { return $false }
+        $v = [ref] $null
+        if (![version]::TryParse($Matches.version, $v)) { return $false }
+        $pr = [ref] $null
+        if (![AUVersion]::TryRefineIdentifiers($Matches.prerelease, $pr, $strict, $semver)) { return $false }
+        $bm = [ref] $null
+        if (![AUVersion]::TryRefineIdentifiers($Matches.buildMetadata, $bm, $strict, $semver)) { return $false }
+        $result.Value = [AUVersion]::new($v.Value, $pr.Value, $bm.Value)
         return $true
     }
 
     hidden static [version] NormalizeVersion([version] $value) {
-        if ($value.Revision -eq 0) {
-            return $value.ToString(3)
-        }
         if ($value.Build -eq -1) {
             return [version] "$value.0"
+        }
+        if ($value.Revision -eq 0) {
+            return [version] $value.ToString(3)
         }
         return $value
     }
@@ -59,7 +79,7 @@ class AUVersion : System.IComparable {
         if ($value) {
             $value -split '\.' | ForEach-Object {
                 # if identifier is exclusively numeric, cast it to an int
-                if ($_ -match '^[0-9]+$') {
+                if ($_ -match '^\d+$') {
                     $result += [int] $_
                 } else {
                     $result += $_
@@ -75,27 +95,39 @@ class AUVersion : System.IComparable {
             $identifierPattern = "[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*"
             return "^$versionPattern(?:-(?<prerelease>$identifierPattern))?(?:\+(?<buildMetadata>$identifierPattern))?`$"
         } else {
-            $identifierPattern = "[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+| \d+)*"
-            return "$versionPattern(?:[- ]*(?<prerelease>$identifierPattern))?(?:[+ *](?<buildMetadata>$identifierPattern))?"
+            $identifierPattern = "[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+| +\d+)*"
+            return "$versionPattern(?:(?:-| *)(?<prerelease>$identifierPattern))?(?:(?:\+| *)(?<buildMetadata>$identifierPattern))?"
         }
     }
 
-    hidden static [string] RefineParts([string] $value) {
-        $result = if ($value -match '^(?<identifier>[A-Za-z]+)(?<digits>\d+)$') {
-            '{0}.{1}' -f $Matches.identifier, $Matches.digits
-        } else {
-            $value.Replace(' ', '.')
+    hidden static [bool] TryRefineIdentifiers([string] $value, [ref] $result, [bool] $strict, [SemVer] $semver) {
+        $result.Value = [string] ''
+        if (!$value) { return $true }
+        if (!$strict) { $value = $value -replace ' +', '.' }
+        if ($semver -eq [SemVer]::V1) {
+            # SemVer1 means no dot-separated identifiers
+            if ($strict -and $value -match '\.') { return $false }
+            $value = $value.Replace('.', '')
+        } elseif ($semver -eq [SemVer]::EnhancedV2) {
+            # Try to improve a SemVer1 version into a SemVer2 one
+            # e.g. 1.24.0-beta2 becomes 1.24.0-beta.2
+            if ($value -match '^(?<identifier>[A-Za-z-]+)(?<digits>\d+)$') {
+                $value = '{0}.{1}' -f $Matches.identifier, $Matches.digits
+            }
         }
-        return $result
+        $result.Value = $value
+        return $true
     }
 
-    [AUVersion] WithVersion([version] $version) { return [AUVersion]::new($version, $this.Prerelease, $this.BuildMetadata) }
+    [AUVersion] WithVersion([version] $version) {
+        return [AUVersion]::new($version, $this.Prerelease, $this.BuildMetadata)
+    }
 
     [int] CompareTo($obj) {
-        if ($obj -eq $null) { return 1 }
-        if ($obj -isnot [AUVersion]) { throw "AUVersion expected: $($obj.GetType())" }
-        $t = $this.GetAllParts()
-        $o = $obj.GetAllParts()
+        if ($null -eq $obj) { return 1 }
+        if ($obj -isnot [AUVersion]) { throw "[AUVersion] expected, got [$($obj.GetType())]." }
+        $t = $this.GetParts()
+        $o = $obj.GetParts()
         for ($i = 0; $i -lt $t.Length -and $i -lt $o.Length; $i++) {
             if ($t[$i].GetType() -ne $o[$i].GetType()) {
                 $t[$i] = [string] $t[$i]
@@ -113,12 +145,12 @@ class AUVersion : System.IComparable {
 
     [bool] Equals($obj) { return $this.CompareTo($obj) -eq 0 }
 
-    [int] GetHashCode() { return $this.GetAllParts().GetHashCode() }
+    [int] GetHashCode() { return $this.GetParts().GetHashCode() }
 
     [string] ToString() {
         $result = $this.Version.ToString()
-        if ($this.Prerelease) { $result += "-$($this.Prerelease)" }
-        if ($this.BuildMetadata) { $result += "+$($this.BuildMetadata)" }
+        if ($this.Prerelease) { $result += '-{0}' -f $this.Prerelease }
+        if ($this.BuildMetadata) { $result += '+{0}' -f $this.BuildMetadata }
         return $result
     }
 
@@ -127,7 +159,7 @@ class AUVersion : System.IComparable {
         return $this.Version.ToString($fieldCount)
     }
 
-    hidden [object[]] GetAllParts() {
+    hidden [object[]] GetParts() {
         $result = , $this.Version
         $result += [AUVersion]::NormalizePrerelease($this.Prerelease)
         return $result
