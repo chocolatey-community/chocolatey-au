@@ -156,21 +156,46 @@ function Update-Package {
             }
         }
 
-        function fix_choco {
-            Start-Sleep -Milliseconds (Get-Random 500) #reduce probability multiple updateall threads entering here at the same time (#29)
-
+        function is_choco_fixed {
             # Copy choco modules once a day
             if (Test-Path $choco_tmp_path) {
                 $ct = Get-Item $choco_tmp_path | ForEach-Object creationtime
-                if (((get-date) - $ct).Days -gt 1) { Remove-Item -recurse -force $choco_tmp_path } else { Write-Verbose 'Chocolatey copy is recent, aborting monkey patching'; return }
+                if (((get-date) - $ct).TotalDays -lt 1) {
+                    Write-Verbose 'Chocolatey copy is recent, aborting monkey patching'
+                    return $true
+                }
+            }
+            return $false
+        }
+
+        function fix_choco {
+            if (is_choco_fixed) { return }
+
+            # Use a mutex to avoid multiple updateall threads entering here at the same time (#29)
+            $mutex = [System.Threading.Mutex]::new($false, "AU_fix_choco")
+            $timeout = New-TimeSpan -Seconds 60 # Timeout to avoid dead lock
+            if (!$mutex.WaitOne($timeout)) {
+                if (is_choco_fixed) { return } # Just in case it was fixed after all
+                throw "Unable to monkey patch chocolatey"
             }
 
-            Write-Verbose "Monkey patching chocolatey in: '$choco_tmp_path'"
-            Copy-Item -recurse -force $Env:ChocolateyInstall\helpers $choco_tmp_path\helpers
-            if (Test-Path $Env:ChocolateyInstall\extensions) { Copy-Item -recurse -force $Env:ChocolateyInstall\extensions $choco_tmp_path\extensions }
+            try {
+                if (is_choco_fixed) { return } # If it has already been fixed by an other thread
 
-            $fun_path = "$choco_tmp_path\helpers\functions\Get-ChocolateyWebFile.ps1"
-            (Get-Content $fun_path) -replace '^\s+return \$fileFullPath\s*$', '  throw "au_break: $fileFullPath"' | Set-Content $fun_path -ea ignore
+                $choco_tmp_path_new = "$Env:TEMP\chocolatey\au\chocolatey_new"
+                Write-Verbose "Monkey patching chocolatey in: '$choco_tmp_path_new'"
+                Copy-Item -recurse -force $Env:ChocolateyInstall\helpers $choco_tmp_path_new\helpers
+                if (Test-Path $Env:ChocolateyInstall\extensions) { Copy-Item -recurse -force $Env:ChocolateyInstall\extensions $choco_tmp_path_new\extensions }
+
+                $fun_path = "$choco_tmp_path_new\helpers\functions\Get-ChocolateyWebFile.ps1"
+                (Get-Content $fun_path) -replace '^\s+return \$fileFullPath\s*$', '  throw "au_break: $fileFullPath"' | Set-Content $fun_path -ea ignore
+
+                Write-Verbose "Moving monkey patched chocolatey in: '$choco_tmp_path'"
+                if (Test-Path $choco_tmp_path) { Remove-Item -recurse -force $choco_tmp_path }
+                Move-Item -force $choco_tmp_path_new $choco_tmp_path
+            } finally {
+                $mutex.ReleaseMutex()
+            }
         }
 
         "Automatic checksum started" | result
