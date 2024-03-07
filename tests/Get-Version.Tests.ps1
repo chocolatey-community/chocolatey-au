@@ -1,8 +1,8 @@
-remove-module AU -ea ignore
-import-module $PSScriptRoot\..\AU
+remove-module Chocolatey-AU -ea ignore
+import-module $PSScriptRoot\..\Chocolatey-AU\Chocolatey-AU.psm1 # Tests require the private functions exported
 
 Describe 'Get-Version' -Tag getversion {
-    InModuleScope AU {
+    InModuleScope Chocolatey-AU {
         It 'should convert a strict version' {
             $expectedVersionStart = '1.2'
             $expectedVersion = "$expectedVersionStart.3.4"

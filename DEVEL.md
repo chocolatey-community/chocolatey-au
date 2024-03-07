@@ -2,49 +2,30 @@
 
 The development requires Powershell 5+.
 
-The following scripts are used during development and deployment:
+The `build.ps1` script used during development and has the following tasks:
 
-- `setup.ps1`  
-Install dependencies for everything.
-- `build.ps1`  
-Build the module and packages.
-- `install.ps1`  
-Install the module in the system.
-- `publish.ps1`  
-Publish module to Powershell Gallery, Chocolatey and Github.
+- `Clean`
+  - Remove the Output directory.
+- `Build`
+  - Build the module into a usable state.
+- `Test`
+  - Run the Pester tests on the module.
+- `CreateChocolateyPackage`
+  - Turn the built module into a Chocolatey package.
 
 
 ## Build and test
 
-The builded module will be available in the `_build\{version}` directory. Version is by default determined automatically based on the current time.
+The builded module will be available in the `Output` directory.
 
 ```
 ./build.ps1
 ```
 The following example commands can be run from the repository root:
 
-| Description                                             | Command                              |
-| :---                                                    | :---                                 |
-| Override default version                                | `./build -Version 0.0.1`             |
-| Build and install in the system with short version      | `./build.ps1 -Install -ShortVersion` |
-| Install latest build in the system                      | `./install.ps1`                      |
-| Install using given path in the system                  | `./install.ps1 -module_path AU`      |
-| Uninstall from the system                               | `./install.ps1 -Remove`              |
-| Run tests (use `Pester` & `Chocolatey` params to limit) | `./test.ps1`                         |
-| Clean temporary build files                             | `git clean -Xfd -e vars.ps1`         |
-
-
-## Publish
-
-The `publish.ps1` script publishes to Github, PSGallery and Chocolatey. There is a switch parameter for each publishing platform and there is also a parameter for creating a git tag.
-
-```powershell
-$v = ./build.ps1   #create a new version
-./publish.ps1 -Version $v -Tag -Github -PSGallery -Chocolatey  #publish everywhere
-```
-
-Before publishing, edit the `NEXT` header in the `CHANGELOG.md` file to set the release notes. The publish script will take content of the second level header named after version as the release notes. The publishing will fail if release notes are not found. If that happens, don't forget to edit the file **and commit/push it to repository** in order for next tag to include it.
-
-Chocolatey package description is automatically taken from the README.md section "## Features".
-
-Publishing procedure depends on number of environment variables. Rename `vars_default.ps1` to `vars.ps1` and set variables there to get them included.
+| Description                                             | Command                                           |
+| :---                                                    | :---                                              |
+| Run just the build and do not run the Pester Tests      | `./build -Task Build`                             |
+| Run the build the same way that CI will run it          | `./build.ps1 -Task CI -Verbose -ErrorAction Stop` |
+| Clean temporary build files                             | `./build.ps1 -Task Clean`                         |
+| Create a Chocolatey package                             | `./build.ps1 -Task CreateChocolateyPackage`       |

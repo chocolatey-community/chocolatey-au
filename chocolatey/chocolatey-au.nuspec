@@ -1,25 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Do not remove this test for UTF-8: if “Ω” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>au</id>
+    <id>chocolatey-au</id>
     <title>Chocolatey Automatic Package Updater Module</title>
-    <version></version>
-    <authors>Miodrag Milić</authors>
-    <owners>Miodrag Milić</owners>
-    <summary>AU is Powershell module that helps you to automate Chocolatey package updates</summary>
+    <version>$version$</version>
+    <authors>Miodrag Milić, Chocolatey Community</authors>
+    <owners>Miodrag Milić, Chocolatey Community</owners>
+    <summary>Chocolatey-AU is Powershell module that helps you to automate Chocolatey package updates</summary>
     <description></description>
-    <projectUrl>https://github.com/majkinetor/au</projectUrl>
-    <tags>admin powershell module package chocolatey</tags>
-    <copyright>Miodrag Milić</copyright>
+    <projectUrl>https://github.com/chocolatey-community/chocolatey-au</projectUrl>
+    <tags>admin powershell module package chocolatey update</tags>
+    <copyright>Miodrag Milić, Chocolatey Community</copyright>
     <licenseUrl>https://www.gnu.org/licenses/gpl-2.0.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>https://github.com/majkinetor/au/blob/master/CHANGELOG.md</releaseNotes>
-    <docsUrl>https://github.com/majkinetor/au/blob/master/README.md</docsUrl>
-    <mailingListUrl>https://github.com/majkinetor/au/issues</mailingListUrl>
-    <bugTrackerUrl>https://github.com/majkinetor/au/issues</bugTrackerUrl>
-    <projectSourceUrl>https://github.com/majkinetor/au</projectSourceUrl>
-    <packageSourceUrl>https://github.com/majkinetor/au/tree/master/chocolatey</packageSourceUrl>
+    <releaseNotes>https://github.com/chocolatey-community/chocolatey-au/releases/$version$</releaseNotes>
+    <docsUrl>https://github.com/chocolatey-community/chocolatey-au/blob/develop/README.md</docsUrl>
+    <mailingListUrl>https://github.com/chocolatey-community/chocolatey-au/issues</mailingListUrl>
+    <bugTrackerUrl>https://github.com/chocolatey-community/chocolatey-au/issues</bugTrackerUrl>
+    <projectSourceUrl>https://github.com/chocolatey-community/chocolatey-au</projectSourceUrl>
+    <packageSourceUrl>https://github.com/chocolatey-community/chocolatey-au/tree/develop/chocolatey</packageSourceUrl>
     <!--<dependencies>-->
       <!--<dependency id="powershell" version="5.0" />-->
     <!--</dependencies>-->

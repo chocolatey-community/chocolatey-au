@@ -7,7 +7,7 @@ function title($txt) { "`r`n{0}`r`n{1}`r`n" -f $txt,('-'*$txt.Length) }
 function indent($txt, $level=4) { $txt -split "`n" | ForEach-Object { ' '*$level + $_ } }
 
 $now         = $Info.startTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm')
-$au_version  = Get-Module au -ListAvailable | ForEach-Object Version | Select-Object -First 1 | ForEach-Object { "$_" }
+$au_version  = Get-Module Chocolatey-AU -ListAvailable | ForEach-Object Version | Select-Object -First 1 | ForEach-Object { "$_" }
 $package_no  = $Info.result.all.Length
 
 "{0,-15}{1}" -f 'Title:', $Title

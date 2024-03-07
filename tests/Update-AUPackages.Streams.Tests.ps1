@@ -1,5 +1,5 @@
-remove-module AU -ea ignore
-import-module $PSScriptRoot\..\AU
+remove-module Chocolatey-AU -ea ignore
+import-module $PSScriptRoot\..\Chocolatey-AU\Chocolatey-AU.psm1 # Tests require the private functions exported
 
 Describe 'Update-AUPackages using streams' -Tag updateallstreams {
     $saved_pwd = $pwd
@@ -24,7 +24,7 @@ Describe 'Update-AUPackages using streams' -Tag updateallstreams {
             $nu.OuterXml | Set-Content "$path\$name.nuspec"
             Move-Item "$path\test_package_with_streams.json" "$path\$name.json"
 
-            $module_path = Resolve-Path $PSScriptRoot\..\AU
+            $module_path = Resolve-Path $PSScriptRoot\..\Chocolatey-AU
             "import-module '$module_path' -Force", (Get-Content $path\update.ps1 -ea ignore) | Set-Content $path\update.ps1
         }
 
@@ -164,11 +164,11 @@ Describe 'Update-AUPackages using streams' -Tag updateallstreams {
                         }
                     )
                 }
-            } -ModuleName AU
+            } -ModuleName Chocolatey-AU
 
             updateall -NoPlugins:$false -Options $Options 6> $null
 
-            Assert-MockCalled Invoke-RestMethod -Exactly 6 -ModuleName AU
+            Assert-MockCalled Invoke-RestMethod -Exactly 6 -ModuleName Chocolatey-AU
         }
     }
 
