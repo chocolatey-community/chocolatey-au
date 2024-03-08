@@ -14,7 +14,7 @@ param(
 )
 
 $ErrorActionPreference = 'STOP'
-$git_url = 'https://github.com/majkinetor/au.git'
+$git_url = 'https://github.com/chocolatey-community/chocolatey-au.git'
 
 if (!(Get-Command git -ea 0)) { throw 'Git must be installed' }
 [version]$git_version = (git --version) -replace 'git|version|\.windows'
@@ -28,20 +28,16 @@ Push-Location $PSScriptRoot\..
 if ($is_latest) { $Version = (git tag | ForEach-Object { [version]$_ } | Sort-Object -desc | Select-Object -first 1).ToString() }
 if ($is_branch) {
     $branches = git branch -r -q | ForEach-Object { $_.Replace('origin/','').Trim() }
-    if ($branches -notcontains $Version) { throw "AU branch '$Version' doesn't exist" }
+    if ($branches -notcontains $Version) { throw "Chocolatey-AU branch '$Version' doesn't exist" }
     if ($Version -ne 'master') { git fetch -q origin "${Version}:${Version}" }
 } else {
     $tags = git tag
-    if ($tags -notcontains $Version ) { throw "AU version '$Version' doesn't exist"}
+    if ($tags -notcontains $Version ) { throw "Chocolatey-AU version '$Version' doesn't exist"}
 }
 
 git checkout -q $Version
 
-$params = @{ Install = $true; NoChocoPackage = $true}
-if (!$is_branch) { $params.Version = $Version }
-
-"Build parameters:"
-$params.GetEnumerator() | ForEach-Object { "  {0,-20} {1}" -f $_.Key, $_.Value }
-./build.ps1 @params
+./build.ps1 -Task Build
+.\code_drop\temp\chocolateyPackage\tools\install.ps1
 
 Pop-Location

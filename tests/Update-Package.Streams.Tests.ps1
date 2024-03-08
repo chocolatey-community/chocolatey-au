@@ -1,5 +1,5 @@
-remove-module AU -ea ignore
-import-module $PSScriptRoot\..\AU -force
+remove-module Chocolatey-AU -ea ignore
+import-module $PSScriptRoot\..\Chocolatey-AU\Chocolatey-AU.psm1 # Tests require the private functions exported -force
 
 Describe 'Update-Package using streams' -Tag updatestreams {
     $saved_pwd = $pwd
@@ -60,7 +60,7 @@ Describe 'Update-Package using streams' -Tag updatestreams {
         seach_replace
     }
 
-    InModuleScope AU {
+    InModuleScope Chocolatey-AU {
 
         Context 'Updating' {
 

@@ -1,8 +1,8 @@
-remove-module AU -ea ignore
-import-module $PSScriptRoot\..\AU
+remove-module Chocolatey-AU -ea ignore
+import-module $PSScriptRoot\..\Chocolatey-AU\Chocolatey-AU.psm1 # Tests require the private functions exported
 
 Describe 'AUPackage' -Tag aupackage {
-    InModuleScope AU {
+    InModuleScope Chocolatey-AU {
         It 'throws an error when intanciating without a path' {
             { [AUPackage]::new('') } | Should Throw 'empty'
         }
