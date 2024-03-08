@@ -1,8 +1,8 @@
 # Development
 
-The development requires Powershell 5+.
+Development of Chocolatey-AU requires Powershell 5+.
 
-The `build.ps1` script used during development and has the following tasks:
+The `build.ps1` script is used during development and has the following tasks:
 
 - `Clean`
   - Remove the Output directory.
@@ -16,7 +16,7 @@ The `build.ps1` script used during development and has the following tasks:
 
 ## Build and test
 
-The builded module will be available in the `Output` directory.
+The built module will be available in the `Output` directory.
 
 ```
 ./build.ps1
