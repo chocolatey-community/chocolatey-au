@@ -1,11 +1,11 @@
-remove-module AU -ea ignore
-import-module $PSScriptRoot\..\AU
+remove-module Chocolatey-AU -ea ignore
+import-module $PSScriptRoot\..\Chocolatey-AU\Chocolatey-AU.psm1 # Tests require the private functions exported
 
 Describe 'General' {
     $saved_pwd = $pwd
 
     BeforeEach {
-        Set-Location TestDrive:\
+        Set-Location $TestDrive
         Remove-Item -Recurse -Force TestDrive:\test_package -ea ignore
         Copy-Item -Recurse -Force $PSScriptRoot\test_package TestDrive:\test_package
     }

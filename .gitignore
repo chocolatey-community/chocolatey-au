@@ -1,7 +1,3 @@
-/_build
-/chocolatey/tools/AU
-/chocolatey/tools/install.ps1
-/chocolatey/*.nupkg
-/vars.ps1
+/code_drop
 /tests/.vscode/launch.json
 /.vscode/launch.json

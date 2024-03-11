@@ -34,7 +34,7 @@
     # The following script is used to update the package from the github releases page.
     # After it defines the 2 functions, it calls the Update-Package.
     # Checksums are automatically calculated for 32 bit version (the only one in this case)
-    import-module au
+    import-module Chocolatey-AU
 
     function global:au_SearchReplace {
         ".\tools\chocolateyInstall.ps1" = @{

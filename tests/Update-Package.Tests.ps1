@@ -1,5 +1,5 @@
-remove-module AU -ea ignore
-import-module $PSScriptRoot\..\AU -force
+remove-module Chocolatey-AU -ea ignore
+import-module $PSScriptRoot\..\Chocolatey-AU\Chocolatey-AU.psm1 # Tests require the private functions exported -force
 
 Describe 'Update-Package' -Tag update {
     $saved_pwd = $pwd
@@ -35,7 +35,7 @@ Describe 'Update-Package' -Tag update {
         seach_replace
     }
 
-    InModuleScope AU {
+    InModuleScope Chocolatey-AU {
 
         Context 'Updating' {
 
@@ -243,7 +243,7 @@ Describe 'Update-Package' -Tag update {
             }
 
             It "throws if it can't find the nuspec file in the current directory" {
-                Set-Location TestDrive:\
+                Set-Location $TestDrive
                 { update } | Should Throw 'No nuspec file'
             }
 

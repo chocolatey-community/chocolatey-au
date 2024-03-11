@@ -2,11 +2,11 @@
 
 <#
 .SYNOPSIS
-    AU install script
+    Chocolatey-AU install script
 
 .NOTES
-    Always install AU versionless in Program Files to support older PowerShell versions ( v < 5 )
-    Multiple AU versions can be installed using Install-Module if needed (on Posh 5+).
+    Always install Chocolatey-AU versionless in Program Files to support older PowerShell versions ( v < 5 )
+    Multiple Chocolatey-AU versions can be installed using Install-Module if needed (on Posh 5+).
 #>
 param(
     #If given it is path to the module to be installed.
@@ -19,7 +19,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$module_name = 'AU'
+$module_name = 'Chocolatey-AU'
 
 if ($PSVersionTable.PSEdition -ne "Core") {
     $module_dst  = "$Env:ProgramFiles\WindowsPowerShell\Modules"
