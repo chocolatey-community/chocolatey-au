@@ -22,6 +22,7 @@ object ChocolateyAU : BuildType({
         param("env.vcsroot.branch", "%vcsroot.branch%")
         param("env.Git_Branch", "%teamcity.build.vcs.branch.ChocolateyAU_ChocolateyAUVcsRoot%")
         param("teamcity.git.fetchAllHeads", "true")
+        password("env.POWERSHELLGALLERY_API_KEY", "credentialsJSON:a61d4adf-3db8-5bb0-848c-cd207665665f", display = ParameterDisplay.HIDDEN, readOnly = true)
         password("env.GITHUB_PAT", "%system.GitHubPAT%", display = ParameterDisplay.HIDDEN, readOnly = true)
     }
 
