@@ -306,11 +306,6 @@ task Test InstallPester, Build, {
     assert ($results.FailedCount -eq 0) "Pester test failures found, see above or the '$OutputDirectory/test.results.xml' result file for details"
 }
 
-# Synopsis: generate documentation files
-task GenerateDocs {
-    & "$PSScriptRoot/mkdocs.ps1"
-}
-
 # Synopsis: sign PowerShell scripts
 task Sign -After Build {
     $ScriptsToSign = Get-ChildItem -Path $script:ModuleOutputDir -Recurse -Include '*.ps1', '*.psm1'

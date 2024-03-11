@@ -1,4 +1,6 @@
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.XmlReport
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.xmlReport
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.powerShell
@@ -57,11 +59,17 @@ object ChocolateyAU : BuildType({
 
     triggers {
         vcs {
-            branchFilter = ""
+            branchFilter = """
+
+            """.trimIndent()
         }
     }
 
     features {
+        xmlReport {
+            reportType = XmlReport.XmlReportType.NUNIT
+            rules = "code_drop/**/*.xml"
+        }
         pullRequests {
             provider = github {
                 authType = token {
