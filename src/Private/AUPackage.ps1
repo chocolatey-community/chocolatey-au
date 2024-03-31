@@ -13,6 +13,7 @@ class AUPackage {
     [string]   $IgnoreMessage
     [string]   $StreamsPath
     [System.Collections.Specialized.OrderedDictionary] $Streams
+    [string[]] $Files
 
     AUPackage([string] $Path ){
         if ([String]::IsNullOrWhiteSpace( $Path )) { throw 'Package path can not be empty' }
