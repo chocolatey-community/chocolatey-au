@@ -8,7 +8,6 @@ How you migrate from `AU` to `Chocolatey-AU` will depend on how you used `AU` in
 
 If you are cloning the [original `AU` repository](https://github.com/majkinetor/au/) and building the module from there, you will want to update to clone the Chocolatey Community `Chocolatey-AU` repository: `https://github.com/chocolatey-community/chocolatey-au.git` instead. Once that has been done, you will want to [amend your update scripts](#amending-your-update-scripts) to use the `Chocolatey-AU` PowerShell Module instead of `AU`.
 
-
 ## Your Repository Installs AU From the Chocolatey Community Repository
 
 If you are installing `AU` from the [Chocolatey Community Repository](https://community.chocolatey.org/), you will want to update it to `choco install chocolatey-au --confirm` instead of `choco install au -y`. Once that has been done, you will want to [update your update scripts](#amending-your-update-scripts) to use the `Chocolatey-AU` PowerShell Module instead of `AU`.
