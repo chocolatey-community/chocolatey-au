@@ -5,7 +5,7 @@
 
 ---
 
-[Chocolatey-AU plugins](Plugins) are [configured](README.md#plugins) using parameters passed in the HashTable contained in the Options under the key that is named by the plugin. So,`$Options.xyz=@{...}` is a plugin if `xyz.ps1` exists in a directory pointed to by the `PluginPath` updateall option. The Chocolatey-AU will then run this script and pass it `$Options.xyz` HashTable as plugin specific options. Chocolatey-AU comes with several integrated plugins that are described bellow.
+[Chocolatey-AU plugins](Plugins) are [configured](README.md#plugins) using parameters passed in the HashTable contained in the Options under the key that is named by the plugin. So,`$Options.xyz=@{...}` is a plugin if `xyz.ps1` exists in a directory pointed to by the `PluginPath` updateall option. The Chocolatey-AU will then run this script and pass it `$Options.xyz` HashTable as plugin specific options. Chocolatey-AU comes with several integrated plugins that are described below.
 
 Default [update_all.ps1](https://github.com/majkinetor/au-packages-template/blob/master/update_all.ps1) uses environment variables to configure some options. If you use [AppVeyor](https://github.com/majkinetor/au/wiki/AppVeyor) set those variables in the [.appveyor.yml](https://github.com/majkinetor/au-packages-template/blob/master/.appveyor.yml) and to run it locally use [update_vars.ps1](https://github.com/majkinetor/au-packages-template/blob/master/update_vars_default.ps1).
 
@@ -24,7 +24,7 @@ To set up plugin to create gist under your user name you need to give it your gi
 
 **Persist modified files**.
 
-* To use it locally, just ensure `git push` doesn't require credentials and dont set any environment variables.
+* To use it locally, just ensure `git push` doesn't require credentials and don't set any environment variables.
 * To use on build server such as [[AppVeyor]], specify `$Env:username` and `$Env:password`. If you host git repository on Github its preferable to use personal access token. You can use the same token as with gist as long as _**public repo**_ scope is activated.
 
 ## [GitLab](src/Plugins/GitLab.ps1)
