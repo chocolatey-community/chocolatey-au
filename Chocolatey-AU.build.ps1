@@ -31,7 +31,14 @@ param(
     ),
 
     [string]
-    $CertificateSubjectName = "Chocolatey Software, Inc.",
+    $CertificateSubjectName = $(
+        if ($CHOCOLATEY_OFFICIAL_CERT_SUBJECT_NAME) {
+            $CHOCOLATEY_OFFICIAL_CERT_SUBJECT_NAME
+        }
+        else {
+            'Chocolatey Software, Inc'
+        }
+    ),
 
 
     [string]
