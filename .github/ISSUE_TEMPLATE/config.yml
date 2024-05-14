@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask Question In Chat
+    url: https://ch0.co/community-support
+    about: Chat with our community and ask your question.
+  - name: Ask Question By Email
+    url: http://groups.google.com/group/chocolatey
+    about: If you prefer to use email, you can ask your question here.
