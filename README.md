@@ -1,13 +1,11 @@
 > NOTE: This PowerShell module is maintained by the Chocolatey Community as the original maintainer [archived the repository](https://github.com/majkinetor/au/commit/7f9c84e1e15995595dae68b4e8d8a71f50417752). To avoid confusion, and allow easier differentiation, this project has been named `chocolatey-au`. Chocolatey and the Chocolatey Community thanks [majkinetor](https://github.com/majkinetor) for their work on the module over the years.
->
-> Please bear with us while we release the first build and update the documentation. In the meantime, there will continue to be reference to AU within the documentation.
 
 # Chocolatey Automatic Package Updater Module
 
 This PowerShell module implements functions that can be used to automate [Chocolatey](https://chocolatey.org) package updates.
 
 To learn more about Chocolatey automatic packages, please refer to the relevant [documentation](https://docs.chocolatey.org/en-us/create/automatic-packages).
-To see AU in action see [video tutorial](https://www.youtube.com/watch?v=m2XpV2LxyEI&feature=youtu.be).
+To see Chocolatey-AU in action see [video tutorial](https://www.youtube.com/watch?v=m2XpV2LxyEI&feature=youtu.be).
 
 ## Features
 
@@ -16,7 +14,7 @@ To see AU in action see [video tutorial](https://www.youtube.com/watch?v=m2XpV2L
 - Automatically downloads installers and provides/verifies checksums for x32 and x64 versions.
 - Verifies URLs, nuspec versions, remote repository existence etc.
 - Automatically sets the nuspec descriptions from a README.md files.
-- Update single package or any subset of previously created AU packages with a single command.
+- Update single package or any subset of previously created Chocolatey-AU packages with a single command.
 - Multithread support when updating multiple packages.
 - Repeat or ignore specific failures when updating multiple packages.
 - Plugin system when updating everything, with few integrated plugins to send email notifications, save results to gist and push updated packages to git repository.
@@ -27,21 +25,20 @@ To see AU in action see [video tutorial](https://www.youtube.com/watch?v=m2XpV2L
 
 ## Installation
 
-AU module requires minimally PowerShell version 5: `$host.Version -ge '5.0'`
+Chocolatey-AU module requires minimally PowerShell version 5: `$host.Version -ge '5.0'`
 
 To install it, use one of the following methods:
-- PowerShell Gallery: [`Install-Module au`](https://www.powershellgallery.com/packages/AU).
-- Chocolatey:  [`choco install au`](https://chocolatey.org/packages/au).
-- [Download](https://github.com/majkinetor/au/releases/latest) latest 7z package or latest build [artifact](https://ci.appveyor.com/project/majkinetor/au/build/artifacts).
+- PowerShell Gallery: [`Install-Module chocolatey-au`](https://www.powershellgallery.com/packages/Chocolatey-AU).
+- Chocolatey:  [`choco install chocolatey-au`](https://chocolatey.org/packages/au).
+- [Download](https://github.com/chocolatey-community/chocolatey-au/releases/latest) latest Chocolatey Package from GitHub.
 
-
-To quickly start using AU, fork [au-packages-template](https://github.com/majkinetor/au-packages-template) repository and rename it to `au-packages`.
+To quickly start using Chocolatey-AU, fork [au-packages-template](https://github.com/majkinetor/au-packages-template) repository and rename it to `au-packages`.
 
 **NOTE**: All module functions work from within specific root folder. The folder contains all of your Chocolatey packages.
 
 ## Creating the package updater script
 
-The AU uses `update.ps1` script that package maintainers should create in the package directory. No templates are used, just plain PowerShell.
+The Chocolatey-AU uses `update.ps1` script that package maintainers should create in the package directory. No templates are used, just plain PowerShell.
 
 To write the package update script, it is generally required to implement 2 functions: `au_GetLatest` and `au_SearchReplace`.
 
@@ -61,7 +58,7 @@ function global:au_GetLatest {
 }
 ```
 
-The returned version is later compared to the one in the nuspec file and if remote version is higher, the files will be updated. The returned keys of this HashTable are available via global variable `$global:Latest` (along with some keys that AU generates). You can put whatever data you need in the returned HashTable - this data can be used later in `au_SearchReplace`.
+The returned version is later compared to the one in the nuspec file and if remote version is higher, the files will be updated. The returned keys of this HashTable are available via global variable `$global:Latest` (along with some keys that Chocolatey-AU generates). You can put whatever data you need in the returned HashTable - this data can be used later in `au_SearchReplace`.
 
 ### `au_SearchReplace`
 
@@ -81,7 +78,7 @@ Function returns HashTable containing search and replace data for any package fi
 
 Search and replace strings are operands for PowerShell [replace](http://www.regular-expressions.info/powershell.html) operator. You do not have to write them most of the time however, they are rarely changed.
 
-File paths are relative to the package directory. The function can use `$global:Latest` variable to get any type of information obtained when `au_GetLatest` was executed along with some AU generated data such as `PackageName`, `NuspecVersion` etc.
+File paths are relative to the package directory. The function can use `$global:Latest` variable to get any type of information obtained when `au_GetLatest` was executed along with some Chocolatey-AU generated data such as `PackageName`, `NuspecVersion` etc.
 
 The following example illustrates the usage:
 
@@ -96,13 +93,13 @@ function global:au_SearchReplace {
 }
 ```
 
-Here, line of the format `$url32 = '<package_url>'` in the file `tools\chocolateyInstall.ps1` will have its quoted string replaced with latest URL (#1). The next line replaces value of the variable `$checksum32` on the start of the line with the latest checksum that is automatically injected in the `$Latest` variable by the AU framework (#2). Replacement of the latest version in the nuspec file is handled automatically.
+Here, line of the format `$url32 = '<package_url>'` in the file `tools\chocolateyInstall.ps1` will have its quoted string replaced with latest URL (#1). The next line replaces value of the variable `$checksum32` on the start of the line with the latest checksum that is automatically injected in the `$Latest` variable by the Chocolatey-AU framework (#2). Replacement of the latest version in the nuspec file is handled automatically.
 
 **NOTE**: The search and replace works on lines, multiple lines can not be matched with single regular expression.
 
 ### Update
 
-With above functions implemented calling the `Update-Package` (alias `update`) function from the AU module will update the package when needed.
+With above functions implemented calling the `Update-Package` (alias `update`) function from the Chocolatey-AU module will update the package when needed.
 
 You can then update the individual package by running the appropriate `update.ps1` script from within the package directory:
 
@@ -173,7 +170,7 @@ The `update` function does the following checks:
 
 - The `$Latest.Version` will be checked to match a valid nuspec pattern.
 - Any hash key that starts with the word `Url`, will be checked for existence and MIME textual type, since binary is expected here.
-- If the remote version is higher then the nuspec version, the Chocolatey site will be checked for existence of this package version (this works for unpublished packages too). This allows multiple users to update same set of packages without a conflict. Besides, this feature makes it possible not to persist state between the updates as once the package is updated and pushed, the next update will not push the package again. To persist the state of updated packages you can use for instance [Git](https://github.com/majkinetor/au/blob/master/AU/Plugins/Git.ps1) plugin which saves the updated and published packages to the git repository.
+- If the remote version is higher then the nuspec version, the Chocolatey site will be checked for existence of this package version (this works for unpublished packages too). This allows multiple users to update same set of packages without a conflict. Besides, this feature makes it possible not to persist state between the updates as once the package is updated and pushed, the next update will not push the package again. To persist the state of updated packages you can use for instance [Git](Plugins/Git.ps1) plugin which saves the updated and published packages to the git repository.
 - The regex patterns in `au_SearchReplace` will be checked for existence.
 
 If any of the checks fails, package will not get updated. This feature releases you from the worries about how precise is your pattern match in both `au_` functions - if for example, a vendor site changes, the package update will fail because of the wrongly parsed data.
@@ -188,8 +185,8 @@ For some packages, you may want to disable some of the checks by specifying addi
 
 ### Automatic checksums
 
-**NOTE**: This feature works by invoking `chocolateyInstall.ps1` of the respective package with a [monkey-patched version of the `Get-ChocolateyWebFile` helper function](https://github.com/majkinetor/au/blob/a8d31244997f08685cc894da4faa1012c60b34f1/AU/Public/Update-Package.ps1#L172). The install script is supposed to either call this function explicitly or indirectly (e.g. `Install-ChocolateyInstallPackage $url`, which calls the former one).
-In any case, upon execution of `Get-ChocolateyWebFile`, the install script will be **terminated**. Any actions in your script occurring after the call to `Get-ChocolateyWebFile` will **not** be run. This is due to the nature of [how the function gets monkey-patched](https://github.com/majkinetor/au/blob/a8d31244997f08685cc894da4faa1012c60b34f1/AU/Public/Update-Package.ps1#L172), which might be improved in the future.
+**NOTE**: This feature works by invoking `chocolateyInstall.ps1` of the respective package with a [monkey-patched version of the `Get-ChocolateyWebFile` helper function](src/Public/Update-Package.ps1#L172). The install script is supposed to either call this function explicitly or indirectly (e.g. `Install-ChocolateyInstallPackage $url`, which calls the former one).
+In any case, upon execution of `Get-ChocolateyWebFile`, the install script will be **terminated**. Any actions in your script occurring after the call to `Get-ChocolateyWebFile` will **not** be run. This is due to the nature of [how the function gets monkey-patched](src/Public/Update-Package.ps1#L172), which might be improved in the future.
 
 When new version is available, the `update` function will by default download both x32 and x64 versions of the installer and calculate the desired checksum. It will inject this info in the `$global:Latest` HashTable variable so you can use it via `au_SearchReplace` function to update hashes. The parameter `ChecksumFor` can contain words `all`, `none`, `32` or `64` to further control the behavior.
 
@@ -205,7 +202,7 @@ If the checksum is actually obtained from the vendor's site, you can provide it 
 
     return @{ ... Checksum32 = 'xxxxxxxx'; ChecksumType32 = 'md5'; ... }
 
-If the `ChecksumXX` hash key is present, the AU will change to checksum verification mode - it will download the installer and verify that its checksum matches the one provided. If the key is not present, the AU will calculate hash with the given `ChecksumTypeXX` algorithm.
+If the `ChecksumXX` hash key is present, the Chocolatey-AU will change to checksum verification mode - it will download the installer and verify that its checksum matches the one provided. If the key is not present, the Chocolatey-AU will calculate hash with the given `ChecksumTypeXX` algorithm.
 
 ### Manual checksums
 
@@ -260,7 +257,7 @@ Points 2-4 do not apply if you set the explicit version using the variable `au_V
 
 - chocolatey _fix version_ always ends up in to the _Revision_ part of the package version;
 - existing _fix versions_ are changed to contain the current date;
-- if _revision_ part is present in the package version and it is not in the _chocolatey fix notation_ form, AU will keep the existing version but notify about it;
+- if _revision_ part is present in the package version and it is not in the _chocolatey fix notation_ form, Chocolatey-AU will keep the existing version but notify about it;
 
 Force can be triggered also from the `au_GetLatest` function. This may be needed if remote version doesn't change but there was nevertheless change on the vendor site. See the [example](https://github.com/majkinetor/au-packages/blob/master/cpu-z.install/update.ps1#L18-L39) on how to update the package when remote version is unchanged but hashsum of the installer changes.
 
@@ -284,9 +281,9 @@ There is also a special variable `$au_GalleryPackageRootUrl` that can be added t
 
 > Note: The `$au_GalleryUrl` global variable also performs this function, but `$au_GalleryPackageRootUrl` allows more flexibility for internal and 3rd party package repositories.  The `$au_GalleryUrl` will still work for compatibility, but makes assumptions about the URL that may not work in all situations.
 
-### Reusing the AU updater with metapackages
+### Reusing the Chocolatey-AU updater with metapackages
 
-Metapackages can reuse an AU updater of its dependency by the following way:
+Metapackages can reuse an Chocolatey-AU updater of its dependency by the following way:
 
 - In the dependent updater, instead of calling the `update` directly, use construct:
 
@@ -296,7 +293,7 @@ Metapackages can reuse an AU updater of its dependency by the following way:
 
 - In the metapackage updater dot source the dependent updater and override `au_SearchReplace`.
 
-This is best understood via example - take a look at the [cpu-z](https://github.com/majkinetor/au-packages/blob/master/cpu-z/update.ps1) AU updater which uses the updater from the [cpu-z.install](https://github.com/majkinetor/au-packages/blob/master/cpu-z.install/update.ps1) package on which it depends. It overrides the `au_SearchReplace` function and the `update` call but keeps the `au_GetLatest`.
+This is best understood via example - take a look at the [cpu-z](https://github.com/majkinetor/au-packages/blob/master/cpu-z/update.ps1) Chocolatey-AU updater which uses the updater from the [cpu-z.install](https://github.com/majkinetor/au-packages/blob/master/cpu-z.install/update.ps1) package on which it depends. It overrides the `au_SearchReplace` function and the `update` call but keeps the `au_GetLatest`.
 
 ### Embedding binaries
 
@@ -319,7 +316,7 @@ This function will also set the appropriate `$Latest.ChecksumXX`.
 
 ### Streams
 
-The software vendor may maintain _multiple latest versions_, of specific releases because of the need for long time support. `au_GetLatest` provides an option to return multiple HashTables in order for its user to monitor each supported software _stream_. Prior to AU streams, each software stream was typically treated as a separate package and maintained independently. Using AU streams allows a single package updater to update multiple version streams in a single run:
+The software vendor may maintain _multiple latest versions_, of specific releases because of the need for long time support. `au_GetLatest` provides an option to return multiple HashTables in order for its user to monitor each supported software _stream_. Prior to Chocolatey-AU streams, each software stream was typically treated as a separate package and maintained independently. Using Chocolatey-AU streams allows a single package updater to update multiple version streams in a single run:
 
 ```powershell
 function global:au_GetLatest {
@@ -359,7 +356,7 @@ PS> $version.ToString(2) + ' => ' + $version.ToString()
 
 ### WhatIf
 
-If you don't like the fact that AU changes the package inline, or just want to preview changes you can use `$WhatIf` parameter or `$au_WhatIf` global variable:
+If you don't like the fact that Chocolatey-AU changes the package inline, or just want to preview changes you can use `$WhatIf` parameter or `$au_WhatIf` global variable:
 
 ```powershell
 PS C:\au-packages\copyq> $au_Force = $au_WhatIf = $true; .\update.ps1
@@ -372,7 +369,7 @@ WARNING: Package restored and updates saved to: C:\Users\majkinetor\AppData\Loca
 ```
 
 **NOTES**:
-- The inline editing is intentional design choice so that AU, its plugins and user scripts can use latest package data, such as latest version, checksum etc.
+- The inline editing is intentional design choice so that Chocolatey-AU, its plugins and user scripts can use latest package data, such as latest version, checksum etc.
 - WhatIf can be used when updating all packages.
 - Since WhatIf saves the original package before the update and restores it after the update, interruption at specific time can cause package files to be left unrestored. In that case you can manually restore the package from `$Env:TEMP\au\<package_name>\_backup` directory. This is in general not very likely however, because restore happens very quickly after the update.
 
@@ -464,16 +461,16 @@ It is possible to specify a custom user logic in `Options` parameter - every key
     }
 ```
 
-The plugins above - `Report`, `Gist`,`Git`,`RunInfo` and `Mail` -  are executed in the given order (hence the `[ordered]` flag) and AU passes them given options and saves the run results.
+The plugins above - `Report`, `Gist`,`Git`,`RunInfo` and `Mail` -  are executed in the given order (hence the `[ordered]` flag) and Chocolatey-AU passes them given options and saves the run results.
 
-To add custom plugins, specify additional plugin search path via `$Options.PluginPath`. Plugin is a normal PowerShell script and apart from parameters given in its HashTable the AU will send it one more parameter `$Info` that contains current run info. The name of the script file must be the same as that of the key which value is used to pass the parameters to the plugin. If a key with the value of type `[HashTable]` doesn't point to existing PowerShell script it is not considered to be an AU plugin.
+To add custom plugins, specify additional plugin search path via `$Options.PluginPath`. Plugin is a normal PowerShell script and apart from parameters given in its HashTable the Chocolatey-AU will send it one more parameter `$Info` that contains current run info. The name of the script file must be the same as that of the key which value is used to pass the parameters to the plugin. If a key with the value of type `[HashTable]` doesn't point to existing PowerShell script it is not considered to be a Chocolatey-AU plugin.
 
 To temporary disable plugins use `updateall` option `NoPlugins` or global variable `$au_NoPlugins`.
-To temporary exclude the AU package from `updateall` procedure add `_` prefix to the package directory name.
+To temporary exclude the Chocolatey-AU package from `updateall` procedure add `_` prefix to the package directory name.
 
 You can also execute a custom script via ScriptBlock specified via `BeforeEach` and `AfterEach` options. They will receive 2 parameters - package name and Options HashTable which you can use to pass any other parameter.
 
-For more information take a look at the [plugins documentation](https://github.com/majkinetor/au/tree/master/Plugins.md).
+For more information take a look at the [plugins documentation](Plugins.md).
 
 ### Make a script
 
@@ -562,9 +559,9 @@ Returns the list of the packages which have `update.ps1` script in its directory
 ## Community
 
 - [Wormies AU Helpers](https://github.com/WormieCorp/Wormies-AU-Helpers)
-Helper scripts to make maintaining packages using AU even easier
-- [Chocolatey Core Community Maintainers Team Packages](https://github.com/chocolatey/chocolatey-coreteampackages)
-The [largest](https://gist.github.com/choco-bot/a14b1e5bfaf70839b338eb1ab7f8226f) repository of AU packages by far
+Helper scripts to make maintaining packages using Chocolatey-AU even easier
+- [Chocolatey Community Chocolatey Packages](https://github.com/chocolatey-community/chocolatey-packages)
+The [largest](https://gist.github.com/choco-bot/a14b1e5bfaf70839b338eb1ab7f8226f) repository of Chocolatey-AU packages by far
 
 ## Repository
 
