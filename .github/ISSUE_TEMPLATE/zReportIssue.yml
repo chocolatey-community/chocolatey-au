@@ -1,0 +1,123 @@
+name: Report Issue
+description: Did you find unexpected behavior?
+labels: ["Bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ensure you have read over [Submitting Issues](https://github.com/chocolatey/.github/blob/main/SUBMITTING-ISSUES.md) and you are opening this issue in the correct repository.
+
+        Please check to see if your problem already exists with a quick search of the issues. Start with one relevant term and then add others if you get too many results.
+
+        **NOTE: Keep in mind we have a [Code Of Conduct](https://github.com/chocolatey/.github/blob/main/CODE_OF_CONDUCT.md) that we expect folks to observe when they are looking for support in the Chocolatey community.**
+
+        Name your issue appropriately: give it a sentence that reads well enough for anyone seeing this in the release notes to know what it is.
+
+        When writing out the issue details, please ensure you are writing it as if you were explaining it to somebody else, even if you will be working on and resolving the issue yourself.
+        This helps others to understand the reasons for the issue and for it to be searchable in the future.
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      description: Before continuing, make sure you have done the following.
+      options:
+        - label: I confirm there are no unresolved issues reported on the [Chocolatey Status page](https://status.chocolatey.org).
+          required: true
+        - label: I have verified this is the correct repository for opening this issue.
+          required: true
+        - label: I have verified no other issues exist related to my problem.
+          required: true
+        - label: I have verified this is not an issue for a specific package.
+          required: true
+        - label: I have verified this issue is not security related.
+          required: true
+        - label: I confirm I am using **official**, and **not** unofficial, or modified, Chocolatey products.
+          required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: What You Are Seeing?
+      description: |
+        In your own words, please describe the problem that you are experiencing. Please include images if possible, as this can give a clearer indication of the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: What is Expected?
+      description: |
+        Instead of the behavior that you were seeing, what did you expect would be happening instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repeatable-steps
+    attributes:
+      label: How Did You Get This To Happen?
+      description: |
+        Please include a complete set of reproducible steps that another user or maintainer of the repository can follow to get the same behavior that you are seeing.
+
+        **NOTE: We may be unable to troubleshoot/respond to issues without reproducible steps. If you do not complete this section, there is a high chance your issue may be closed.**
+      placeholder: |
+        1. I ran this command `choco source list`
+        2. No sources were displayed
+        3. I then ran this command `choco blah`
+        4. etc.
+    validations:
+      required: true
+  - type: textarea
+    id: system-details
+    attributes:
+      label: System Details
+      description: |
+        Please include as many details about your system as possible. Sometimes, a problem may only happen on specific systems, and this information can be vital to resolving your issue.
+
+        At a minimum, include the following pieces of information:
+        We assume you are using Windows PowerShell, and all example commands given should be run in Windows PowerShell, not in PowerShell Core or CMD.
+
+        * Operating System: To get this information run `[System.Environment]::OSVersion.version.tostring()`
+        * Windows PowerShell Version: Run `$PSVersionTable`
+        * Chocolatey CLI Version: Run `choco --version`
+        * Chocolatey Licensed Extension version (Run `choco list chocolatey.extension --exact` (If running a Chocolatey CLI version less than v2.0.0, add `--local-only`)):
+        * Chocolatey License type (Professional / Business / ?)
+        * Terminal/Emulator: Some knowledge from you is necessary here. CMD, Windows PowerShell, PowerShell Core, Microsoft Terminal, Cmder, and more are possible known terminals or emulators.
+      value: |
+        * Operating System:
+        * Windows PowerShell version:
+        * Chocolatey CLI Version:
+        * Chocolatey Licensed Extension version:
+        * Chocolatey License type:
+        * Terminal/Emulator:
+    validations:
+      required: true
+  - type: textarea
+    id: installed-packages
+    attributes:
+      label: Installed Packages
+      description: |
+        Sometimes one or more packages installed may be the cause of the problem. Please include the information from the command `choco list ` (If running a Chocolatey CLI version less than v2.0.0, add `--local-only`). If this is part of the installation of Chocolatey CLI or no packages
+        are installed (not even Chocolatey); please add `N/A` instead.
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: output-log
+    attributes:
+      label: Output Log
+      description: |
+        Please include the log given by Chocolatey CLI when running in debugging and verbose mode. You can run Chocolatey CLI in debugging and verbose mode using the flags `--debug --verbose`. Alternatively, you can find the log file in the following default location: `C:\ProgramData\chocolatey\logs\chocolatey.log`.
+
+        Before including the output log, make sure of the following:
+        - There is no sensitive data shared in the log.
+        - We need ALL OUTPUT, not just what you may believe is relevant.
+        - We need ALL OUTPUT (including the configuration information). See https://gist.github.com/ferventcoder/b1300b91c167c8ac8205#file-error-txt-L1-L41 for what we need.
+        - If it is hard to reproduce with debug/verbose, the log file already logs with those parameters. Just grab the relevant section from the log file.
+        - Preferably link to a gist instead of pasting the entire log in the issue. You can create a new gist here: https://gist.github.com/ (see https://docs.github.com/en/github/writing-on-github/editing-and-sharing-content-with-gists/creating-gists).
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: |
+        Please include any other information here that you feel may be relevant to the problem you are seeing but is not covered in the previous sections.
