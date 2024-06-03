@@ -1,5 +1,5 @@
 # Author: Miodrag Milic <miodrag.milic@gmail.com>
-# Last Change: 22-May-2024.
+# Last Change: 3-June-2024.
 
 <#
 .SYNOPSIS
@@ -8,10 +8,19 @@
 #>
 function Get-RemoteChecksum( [string] $Url, $Algorithm='sha256', $Headers ) {
     $fn = [System.IO.Path]::GetTempFileName()
-    $wc = New-Object net.webclient
-    $wc.DownloadFile($Url, $fn)
-    $res = Get-FileHash $fn -Algorithm $Algorithm | ForEach-Object Hash
+    
+	$originalShowProgress=$ProgressPreference
+	if (-not $showProgress)
+	{
+		$ProgressPreference = 'SilentlyContinue'
+	}
+	Invoke-WebRequest $Url -OutFile $fn -UseBasicParsing -Headers $Headers
+	if (-not $showProgress)
+	{
+		$ProgressPreference = $originalShowProgress
+	}
+    
+	$res = Get-FileHash $fn -Algorithm $Algorithm | ForEach-Object Hash
     Remove-Item $fn -ea ignore
     return $res.ToLower()
 }
-
