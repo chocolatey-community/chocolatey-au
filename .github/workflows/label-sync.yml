@@ -14,7 +14,7 @@ jobs:
       # uncomment the uses line if additional configuration in the current
       # repository is used.
       #- uses: actions/checkout@v3.0.2
-      - uses: EndBug/label-sync@v2.2.0
+      - uses: EndBug/label-sync@v2.3.3
         with:
           config-file: |
             https://raw.githubusercontent.com/chocolatey/.github/master/.github/labels.yml
