@@ -29,7 +29,7 @@ Chocolatey-AU module requires minimally PowerShell version 5: `$host.Version -ge
 
 To install it, use one of the following methods:
 - PowerShell Gallery: [`Install-Module chocolatey-au`](https://www.powershellgallery.com/packages/Chocolatey-AU).
-- Chocolatey:  [`choco install chocolatey-au`](https://chocolatey.org/packages/au).
+- Chocolatey:  [`choco install chocolatey-au`](https://chocolatey.org/packages/chocolatey-au).
 - [Download](https://github.com/chocolatey-community/chocolatey-au/releases/latest) latest Chocolatey Package from GitHub.
 
 To quickly start using Chocolatey-AU, fork [au-packages-template](https://github.com/majkinetor/au-packages-template) repository and rename it to `au-packages`.
