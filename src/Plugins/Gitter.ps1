@@ -5,7 +5,7 @@
   Publishes the package update status to gitter.
 
 .PARAMETER WebHookUrl
-  This is the cusotm webhook url created through gitter integrations.
+  This is the custom webhook url created through gitter integrations.
 
 .PARAMETER MessageFormat
   The format of the message that is meant to be published on gitter.
