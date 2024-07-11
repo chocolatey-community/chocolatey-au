@@ -50,11 +50,11 @@ param(
 
 
     [string]
-    $ChocolateyNugetApiKey = $env:CHOCOOPSPUSH_API_KEY,
+    $ChocolateyNugetApiKey = $env:NUGETDEVPUSH_API_KEY,
 
 
     [string]
-    $ChocolateyPublishUrl = $env:CHOCOOPSPUSH_SOURCE,
+    $ChocolateyPublishUrl = $env:NUGETDEVPUSH_SOURCE,
 
 
     [string]
@@ -71,6 +71,7 @@ $script:SourceFolder = "$PSScriptRoot/src"
 $script:ReleaseBuild = -not [string]::IsNullOrEmpty((git tag --points-at HEAD 2> $null) -replace '^v')
 $script:BuildVersion = $null
 $script:IsPrerelease = $false
+$script:IsPullRequest = $false
 $script:ModuleOutputDir = "$OutputDirectory/$ModuleName"
 
 
@@ -200,6 +201,7 @@ task Build Clean, InstallGitVersion, ScriptAnalyzer, {
 
     $gitversion | Out-String -Width 120 | Write-Host
     $versionInfo = $gitversion 2>$null | ConvertFrom-Json
+    $script:IsPullRequest = $versionInfo.BranchName -match '(changes|pull|pull-requests|merge-requests)'
     $manifestUpdates = @{
         Path          = $manifest.FullName
         ModuleVersion = $versionInfo.MajorMinorPatch
@@ -342,13 +344,14 @@ task Sign -After Build {
 }
 
 # Synopsis: publish $ModuleName either internally or to the PSGallery
-task Publish -If ($script:ReleaseBuild -or $PublishUrl) Build, {
+task Publish -If ((-not $script:IsPullRequest) -and ($script:ReleaseBuild -or $PublishUrl)) Build, {
     if (-not (Test-Path $OutputDirectory)) {
         throw 'Build the module with `Invoke-Build` or `build.ps1` before attempting to publish the module'
     }
 
     if (-not $NugetApiKey -or -not $ChocolateyNugetApiKey) {
-        throw 'Please pass the API key for publishing to both the `-NugetApiKey` and `-ChocolateyNugetApiKey` parameter or set $env:POWERSHELLPUSH_API_KEY and $env:CHOCOOPSPUSH_API_KEY before publishing'
+        Write-Warning 'Please pass the API key for publishing to both the `-NugetApiKey` and `-ChocolateyNugetApiKey` parameter or set $env:POWERSHELLPUSH_API_KEY and $env:NUGETDEVPUSH_API_KEY before publishing.'
+        return
     }
 
     $psdFile = Resolve-Path $script:ModuleOutputDir
@@ -387,6 +390,11 @@ task Publish -If ($script:ReleaseBuild -or $PublishUrl) Build, {
     }
 
     if ($script:ReleaseBuild) {
+        if ($null -eq $env:POWERSHELLGALLERY_API_KEY) {
+            Write-Warning "Tagged build, but no API key present. Not publishing build to PowerShell Gallery."
+            return
+        }
+
         Write-Verbose "Publishing to PSGallery"
         $publishParams.NugetApiKey = $env:POWERSHELLGALLERY_API_KEY
         $publishParams.Repository = 'PSGallery'
