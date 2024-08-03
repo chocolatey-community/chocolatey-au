@@ -537,7 +537,7 @@ AU is almost 100% usable on Linux platforms using pwsh.
 
 The following notes apply to Linux environments:
 
-1. Do not use automatic checksum. Use `-ChecksumFor None` instead and handle cheksum manually using `Get-RemoteFiles` or similar
+1. Do not use automatic checksum. Use `-ChecksumFor None` instead and handle checksum manually using `Get-RemoteFiles` or similar
 2. Check out how to [install choco on linux platforms](https://github.com/chocolatey/choco#other-platforms)
 3. Nuspec `files` element directory separator needs to be changed to a forward slash manually
 
