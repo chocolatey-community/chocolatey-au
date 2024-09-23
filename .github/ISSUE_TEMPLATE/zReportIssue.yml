@@ -54,9 +54,9 @@ body:
     attributes:
       label: How Did You Get This To Happen?
       description: |
-        Please include a complete set of reproducible steps that another user or maintainer of the repository can follow to get the same behavior that you are seeing.
+        Please include a complete set of _reproducible steps_ that another user or maintainer of the repository can follow to get the same behavior that you are seeing. _Reproducible steps_ should allow _anybody_ who is unfamiliar with your issue or environment to be able to reproduce your issue. This may include code, scripts or other environment configuration.
 
-        **NOTE: We may be unable to troubleshoot/respond to issues without reproducible steps. If you do not complete this section, there is a high chance your issue may be closed.**
+        **NOTE: We are unlikely to be able to troubleshoot or respond to issues without _reproducible steps_. If you do not complete this section with _reproducible steps_, the issue will be closed.**
       placeholder: |
         1. I ran this command `choco source list`
         2. No sources were displayed
