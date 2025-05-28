@@ -36,8 +36,8 @@ Please remove all comments before submitting.
 -->
 ### Operating Systems Testing
 <!-- If this is a code change, list the operating systems this has been tested on
-- Windows Server 2008R2
-- Windows 8.1
+- Windows Server 2019
+- Windows 10
 ...
 -->
 
@@ -56,7 +56,7 @@ Please remove all comments before submitting.
 * [ ] Documentation has been updated.
 * [ ] Tests to cover my changes, have been added.
 * [ ] All new and existing tests passed?
-* [ ] PowerShell code changes: PowerShell v2 compatibility checked?
+* [ ] PowerShell code changes: PowerShell v3 compatibility checked?
 
 ## Related Issue
 <!-- Make sure you have raised an issue for this pull request before
