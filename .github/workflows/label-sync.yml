@@ -23,7 +23,7 @@ jobs:
       - uses: EndBug/label-sync@v2
         with:
           config-file: |
-            https://raw.githubusercontent.com/chocolatey/.github/main/.github/labels.yml
+            https://raw.githubusercontent.com/chocolatey/.github/master/.github/labels.yml
       # Uncomment the following line if using a repository specific label file, also remove this comment line
       #      .github/labels.yml
           request-token: ${{ secrets.SYNC_TOKEN }} # Used when getting the config files.
