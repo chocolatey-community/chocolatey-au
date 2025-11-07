@@ -22,11 +22,8 @@ param(
 function deep_clone {
     param($DeepCopyObject)
 
-    $memStream = new-object IO.MemoryStream
-    $formatter = new-object Runtime.Serialization.Formatters.Binary.BinaryFormatter
-    $formatter.Serialize($memStream,$DeepCopyObject)
-    $memStream.Position=0
-    $formatter.Deserialize($memStream)
+    $serializedObject = [System.Management.Automation.PSSerializer]::Serialize($DeepCopyObject, 32)
+    [System.Management.Automation.PSSerializer]::Deserialize($serializedObject)
 }
 
 # Runinfo must save its own run results directly in Info
