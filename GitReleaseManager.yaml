@@ -1,15 +1,12 @@
 issue-labels-include:
   - Breaking Change
   - Deprecate
-  - Feature
-  - C4B Feature
+  - Enhancement
   - Bug
-  - Improvement
   - Documentation
   - Dependency Change
 issue-labels-exclude:
-  - Internal Refactoring
-  - BuildAutomation
+  - Build Automation
   - NO RELEASE NOTES
 issue-labels-alias:
   - name:    Documentation
@@ -25,8 +22,10 @@ create:
   include-sha-section: true
   sha-section-heading: "SHA256 Hashes of the release artifacts"
   sha-section-line-format: "- `{1}\t{0}`"
+  include-contributors: true
 close:
   use-issue-comments: true
+  set-due-date: true
   issue-comment: |-
     :tada: This issue has been resolved in version {milestone} :tada:
 
@@ -37,3 +36,4 @@ close:
     - [PowerShell Gallery](https://www.powershellgallery.com/packages/{repository}/{milestone})
 
     Your **[GitReleaseManager](https://github.com/GitTools/GitReleaseManager)** bot :package: :rocket:
+
