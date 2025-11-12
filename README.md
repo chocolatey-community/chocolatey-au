@@ -293,7 +293,7 @@ Metapackages can reuse an Chocolatey-AU updater of its dependency by the followi
 
 - In the metapackage updater dot source the dependent updater and override `au_SearchReplace`.
 
-This is best understood via example - take a look at the [cpu-z](https://github.com/majkinetor/au-packages/blob/master/cpu-z/update.ps1) Chocolatey-AU updater which uses the updater from the [cpu-z.install](https://github.com/majkinetor/au-packages/blob/master/cpu-z.install/update.ps1) package on which it depends. It overrides the `au_SearchReplace` function and the `update` call but keeps the `au_GetLatest`.
+This is best understood via example - take a look at the [autohotkey](https://github.dev/chocolatey-community/chocolatey-packages/blob/master/automatic/autohotkey/update.ps1) Chocolatey-AU updater which uses the updater from the [autohotkey.install](https://github.dev/chocolatey-community/chocolatey-packages/blob/master/automatic/autohotkey.install/update.ps1) package on which it depends. It overrides the `au_SearchReplace` function and the `update` call but keeps the `au_GetLatest`.
 
 ### Embedding binaries
 
