@@ -19,7 +19,7 @@ jobs:
     - name: Build Chocolatey-AU module
       run: .\build.ps1 -Task CI -Verbose -ErrorAction Stop
     - name: Upload Windows build results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       # Always upload build results
       if: ${{ always() }}
       with:
