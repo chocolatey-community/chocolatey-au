@@ -22,11 +22,9 @@ param(
 function deep_clone {
     param($DeepCopyObject)
 
-    $memStream = new-object IO.MemoryStream
-    $formatter = new-object Runtime.Serialization.Formatters.Binary.BinaryFormatter
-    $formatter.Serialize($memStream,$DeepCopyObject)
-    $memStream.Position=0
-    $formatter.Deserialize($memStream)
+    # Use PSSerializer instead of BinaryFormatter (removed in PowerShell 7)
+    $serialized = [System.Management.Automation.PSSerializer]::Serialize($DeepCopyObject)
+    [System.Management.Automation.PSSerializer]::Deserialize($serialized)
 }
 
 # Runinfo must save its own run results directly in Info
