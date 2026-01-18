@@ -21,7 +21,7 @@ function Push-Package() {
                  else { 'https://push.chocolatey.org' }
                  
     $force_push = if ($Env:au_ForcePush) { '--force' }
-                  else { '' }
+                  else { $null }
 
     $packages = Get-ChildItem *.nupkg | Sort-Object -Property CreationTime -Descending
     if (!$All) { $packages = $packages | Select-Object -First 1 }

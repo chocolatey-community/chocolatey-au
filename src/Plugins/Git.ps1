@@ -35,8 +35,22 @@ if ($packages.Length -eq 0) { Write-Host "No package updated, skipping"; return 
 $root = Split-Path $packages[0].Path
 Push-Location $root
 $origin  = git config --get remote.origin.url
-$origin -match '(?<=:/+)[^/]+' | Out-Null
-$machine = $Matches[0]
+
+# Extract hostname from both HTTPS and SSH URLs
+if ($origin -match '(?<=:/+)[^/]+')
+{
+    # HTTPS: https://github.com/user/repo
+    $machine = $Matches[0]
+}
+elseif ($origin -match '(?<=@)[^:]+')
+{
+    # SSH: git@github.com:user/repo
+    $machine = $Matches[0]
+}
+else
+{
+    throw "Could not parse hostname from git remote URL: $origin"
+}
 
 if ($User -and $Password) {
     Write-Host "Setting credentials for: $machine"
