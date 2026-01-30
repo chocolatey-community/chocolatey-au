@@ -42,11 +42,26 @@ body:
     validations:
       required: true
   - type: textarea
+    id: user-story
+    attributes:
+      label: User Story
+      description: |
+        Please formulate a [User Story](https://github.com/chocolatey/home/blob/main/user-story-and-acceptance-criteria.md#user-story) that describes the feature you want implemented.
+  - type: textarea
     id: additional-context
     attributes:
       label: Additional Context
       description: |
         Please include any other information here that you feel may be relevant to the feature you want implemented that is not covered in the previous sections.
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: |
+        Create [Acceptance Criteria](https://github.com/chocolatey/home/blob/main/user-story-and-acceptance-criteria.md#acceptance-criteria) for this feature request that satisfy the User Story above. Replace the placeholder checkboxes with your own.
+      placeholder: |
+        - [ ] Acceptance Criteria 1
+        - [ ] Acceptance Criteria 2
   - type: textarea
     id: related-issues
     attributes:
