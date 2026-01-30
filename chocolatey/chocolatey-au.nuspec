@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Do not remove this test for UTF-8: if “Ω” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
@@ -10,6 +10,7 @@
     <summary>Chocolatey-AU is Powershell module that helps you to automate Chocolatey package updates</summary>
     <description></description>
     <projectUrl>https://github.com/chocolatey-community/chocolatey-au</projectUrl>
+    <iconUrl>https://chocolatey.org/assets/images/nupkg/chocolateyicon.png</iconUrl>
     <tags>admin powershell module package chocolatey update</tags>
     <copyright>Miodrag Milić, Chocolatey Community</copyright>
     <licenseUrl>https://www.gnu.org/licenses/gpl-2.0.txt</licenseUrl>
