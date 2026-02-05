@@ -129,12 +129,13 @@ function Update-Package {
             $Env:ChocolateyPackageVersion      = $global:Latest.Version.ToString()
             $Env:ChocolateyAllowEmptyChecksums = 'true'
             foreach ($a in $arch) {
+                "Checking hash for $a bit version..." | result
                 $Env:chocolateyForceX86 = if ($a -eq '32') { 'true' } else { '' }
                 try {
                     #rm -force -recurse -ea ignore $pkg_path
                     .\tools\chocolateyInstall.ps1 | result
                 } catch {
-                    if ( "$_" -notlike 'au_break: *') { throw $_ } else {
+                    if ( "$_" -notlike 'au_break: *') { throw } else {
                         $filePath = "$_" -replace 'au_break: '
                         if (!(Test-Path $filePath)) { throw "Can't find file path to checksum" }
 
@@ -152,6 +153,10 @@ function Update-Package {
                             "Package downloaded and hash checked for $a bit version" | result
                         }
                     }
+                }
+                # Sanity check: ensure checksum is defined (rare bug!)
+                if (!$global:Latest.Item('Checksum' + $a)) {
+                    throw "Hash for $a bit version is missing."
                 }
             }
         }
