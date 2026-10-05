@@ -20,13 +20,28 @@ param(
     [string] $SourceName = 'default-source'
 )
 
+if (-not (Get-Command sleet -ErrorAction SilentlyContinue)) {
+    throw "Sleet is not installed or not on PATH. Install Sleet and make sure 'sleet' can be found on PATH."
+}
+
 Write-Host "Pushing packages using Sleet config: '$ConfigPath', Source: '$SourceName'"
 
-$packagePaths = $Info.result.updated | ForEach-Object { $_.Path }
+$packagePaths = $Info.result.updated | ForEach-Object {
+    if ($_.Streams) {
+        $_.Streams.Values | Where-Object { $_.Updated } | ForEach-Object {
+            Resolve-Path ("$($_.Path)/$($_.Name).$($_.RemoteVersion).nupkg")
+        }
+    } else {
+        Resolve-Path ("$($_.Path)/$($_.Name).$($_.RemoteVersion).nupkg")
+    }
+}
 
 if ($packagePaths.Count -eq 0) {
     Write-Host "No packages to push."
 } else {
-    $forceParam = if ($Env:au_forcepush -eq $true) { '--force' } else { '' }
-    sleet push -c "$ConfigPath" -s "$SourceName" $forceParam $packagePaths
+    $sleetArgs = @('push', '--verbosity', 'minimal', '--config', $ConfigPath, '--source', $SourceName)
+    if ($Env:au_ForcePush) { $sleetArgs += '--force' }
+
+    sleet @sleetArgs @packagePaths
+    if ($LASTEXITCODE -ne 0) { throw "Sleet push failed with exit code $LASTEXITCODE" }
 }
