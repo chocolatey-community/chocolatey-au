@@ -1,7 +1,7 @@
 # Plugins
 
 
-[Gist](#gist)   [Git](#git)   [GitLab](#gitlab)   [GitReleases](#gitreleases)   [Gitter](#gitter)   [History](#history)   [Mail](#mail)  [PullRequest](#pullrequest) [Report](#report)   [RunInfo](#runinfo)   [Snippet](#snippet)
+[Gist](#gist)   [Git](#git)   [GitLab](#gitlab)   [GitReleases](#gitreleases)   [Gitter](#gitter)   [History](#history)   [Mail](#mail)  [PullRequest](#pullrequest) [Report](#report)   [RunInfo](#runinfo)   [Sleet](#sleet)   [Snippet](#snippet)
 
 ---
 
@@ -108,6 +108,16 @@ Report Types and associated Params:
 
 Run this plugin as the last one to save all other info produced during the run in such way that it can be recreated as object.
 To load it for inspection use `$info = Import-CliXml update_info.xml`.
+
+## [Sleet](src/Plugins/Sleet.ps1)
+
+**Pushes updated packages to a Sleet repository**.
+
+* Requires [Sleet](https://github.com/emgarten/Sleet) to be installed locally and available on the `PATH`, along with a `sleet.json` settings file.
+* Options:
+  * *ConfigPath* - Path to the Sleet configuration JSON file. Defaults to `sleet.json`.
+  * *SourceName* - Name of the source to push to, as defined in the Sleet configuration. Defaults to `default-source`.
+* The `Push` parameter in the options hashtable is not respected, as that is for `choco push`. Enable and disable the Sleet push by including or not including the plugin configuration in the options.
 
 ## [Snippet](src/Plugins/Snippet.ps1)
 
