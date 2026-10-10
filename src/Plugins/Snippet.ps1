@@ -41,6 +41,7 @@ $params = @{
     Uri         = "https://$Domain/api/v4/snippets/$Id"
     Body        = ($snippet | ConvertTo-Json).replace('"{\"content\": \"','{"content": "').replace('\"}"','"') + ', "file_name": "' + $FileName + '"}'
     Headers = @{ 'PRIVATE-TOKEN'=$ApiToken }
+    UseBasicParsing = $true
 }
 
 # Request
