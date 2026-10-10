@@ -175,7 +175,8 @@ Describe 'Update-Package' -Tag update {
                 $res.Updated | Should Be $true
 
                 get_latest -Version 1.3-alpha.1
-                { update } | Should Throw "Invalid version"
+                $res = update
+                $res.Updated | Should Be $true
 
                 get_latest -Version 1.3a
                 { update } | Should Throw "Invalid version"
