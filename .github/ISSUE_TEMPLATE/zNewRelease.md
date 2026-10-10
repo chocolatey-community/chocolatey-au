@@ -22,7 +22,7 @@ For the steps requiring a Chocolatey Team Member, reach out to one of the team m
 - [ ] Make sure all issues in the upcoming milestone have only one type label associated (A type label would be labels such as `Feature`, `Improvement`, `Enhancement`, `Bug Fix`, etc).
 - [ ] If the GitHub milestone issues are still open, confirm that they are done before moving on. If they are in fact done, apply the `Done` label and close the issue.
 - [ ] Update the GitHub milestones description if there is a need for any custom words that should be part of the release notes.
-- [ ] Run the following command to generate release notes `gitreleasemanager.exe -m <release_version_here> --token $env:GITRELEASEMANAGER_PAT -o chocolatey-community -r chocolatey-au`
+- [ ] Run the following command to generate release notes `gitreleasemanager.exe create -m <release_version_here> --token $env:GITRELEASEMANAGER_PAT -o chocolatey-community -r chocolatey-au`
   - [ ] **NOTE:** This expects that you have GitReleaseManager installed. If you do not, it can be installed with `choco install gitreleasemanager.portable --confirm`
   - [ ] **NOTE:** If doing an alpha/beta release, don't run this step, instead generate the release notes manually. GitReleaseManager uses labels and milestones to generate the release notes, and therefore won't understand what needs to be done, especially when there are multiple alpha/beta releases.
   - [ ] Before running the above command, make sure you have set the environment variable `GITRELEASEMANAGER_PAT` to your own access token. This can be set through PowerShell with `$env:GITRELEASEMANAGER_PAT = "<token>"`. This token requires access to the labels, milestones, issues, pull requests and releases API.
@@ -37,9 +37,11 @@ For the steps requiring a Chocolatey Team Member, reach out to one of the team m
   - [ ] `git push origin` - here origin is assumed to be your fork on the above repository
 - [ ] Assuming everyone is happy, Publish the GitHub release.
   - [ ] This will trigger a tagged build on a private CI system. **NOTE:** Contact a Chocolatey Team Member about sending you the package artifact once it has been built if you have no access to internal systems.
+  - [ ] The triggered build from the private CI system will automatically publish to The PowerShell Gallery.
   - [ ] Save the package acquired from the internal systems, or a Team Member to a local directory on your local system.
 - [ ] Verify that the package can be installed and that it can be uninstalled.
   - [ ] Run `choco install chocolatey-au --source="'C:\testing'"` (_replace `C:\testing` with the location you sawed the package to_) and ensure that it successfully installs (_use upgrade if it was already installed_).
+  - [ ] Run `Import-Module Chocolatey-AU` and ensure that the module imports successfully.
   - [ ] Run `choco uninstall chocolatey-au` and verify the package was successfully uninstalled.
 - [ ] Go back to the releases page, and upload the package artifact `chocolatey-au` to the release.
 - [ ] Push or ask a Chocolatey Team Member to push the previously uploaded artifact to the Chocolatey Community Repository (_Wait on confirmation that this has been pushed, and is pending moderation before moving further_).
