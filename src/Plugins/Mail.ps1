@@ -8,6 +8,7 @@ param(
     [string]   $Server,
     [string]   $UserName,
     [string]   $Password,
+    [string]   $Domain,
     [int]      $Port,
     [string[]] $Attachment,
     [switch]   $EnableSsl,
@@ -50,7 +51,13 @@ $Attachment | ForEach-Object { if ($_) { $msg.Attachments.Add($_)} }
 
 # Send mail message
 $smtp = new-object Net.Mail.SmtpClient($Server)
-if ($UserName) { $smtp.Credentials = new-object System.Net.NetworkCredential($UserName, $Password) }
+if ($UserName) {
+    if ($Domain) {
+        $smtp.Credentials = New-Object System.Net.NetworkCredential($UserName, $Password, $Domain)
+    } else {
+        $smtp.Credentials = New-Object System.Net.NetworkCredential($UserName, $Password)
+    }
+}
 if ($Port)     { $smtp.Port = $Port }
 $smtp.EnableSsl = $EnableSsl
 $smtp.Send($msg)
