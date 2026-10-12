@@ -13,11 +13,11 @@
 param(
     $Info,
 
-    # Path to the Sleet configuration JSON file
-    [string] $ConfigPath = 'sleet.json',
+    # Path to the Sleet configuration JSON file. If not set, Sleet finds its own settings.
+    [string] $ConfigPath,
 
-    # Name of the source to push to in the Sleet configuration
-    [string] $SourceName = 'default-source'
+    # Name of the source to push to in the Sleet configuration. Not needed if the configuration has only one source.
+    [string] $SourceName
 )
 
 if (-not (Get-Command sleet -ErrorAction SilentlyContinue)) {

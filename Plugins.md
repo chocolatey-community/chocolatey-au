@@ -113,10 +113,10 @@ To load it for inspection use `$info = Import-CliXml update_info.xml`.
 
 **Pushes updated packages to a Sleet repository**.
 
-* Requires [Sleet](https://github.com/emgarten/Sleet) to be installed locally and available on the `PATH`, along with a `sleet.json` settings file.
+* Requires [Sleet](https://github.com/emgarten/Sleet) v7.2.0 or newer to be installed locally and available on the `PATH`, along with a `sleet.json` settings file.
 * Options:
-  * *ConfigPath* - Path to the Sleet configuration JSON file. Defaults to `sleet.json`.
-  * *SourceName* - Name of the source to push to, as defined in the Sleet configuration. Defaults to `default-source`.
+  * *ConfigPath* - Path to the Sleet configuration JSON file. If not set, Sleet looks for `sleet.json` in the current folder and its parents, then `.netconfig` files and environment variables.
+  * *SourceName* - Name of the source to push to, as defined in the Sleet configuration. Only needed when the configuration has more than one source.
 * The `Push` parameter in the options hashtable is not respected, as that is for `choco push`. Enable and disable the Sleet push by including or not including the plugin configuration in the options.
 
 ## [Snippet](src/Plugins/Snippet.ps1)
