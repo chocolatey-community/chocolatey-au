@@ -58,6 +58,7 @@ Please remove all comments before submitting.
 * [ ] Tests to cover my changes, have been added.
 * [ ] All new and existing tests passed?
 * [ ] PowerShell code changes: PowerShell v3 compatibility checked?
+* [ ] Significant design decisions: [ADR](https://github.com/chocolatey/choco/blob/master/CONTRIBUTING.md#architecture-decision-records-adrs) has been created by a Chocolatey team member?
 * [ ] All items are complete on the [Definition of Done](https://github.com/chocolatey/home/blob/main/definition-of-done.md).
 
 ## Related Issue
