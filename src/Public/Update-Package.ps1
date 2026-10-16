@@ -139,6 +139,9 @@ function Update-Package {
                         if (!(Test-Path $filePath)) { throw "Can't find file path to checksum" }
 
                         $item = Get-Item $filePath
+
+                        $package.Files += $item.FullName
+
                         $type = if ($global:Latest.ContainsKey('ChecksumType' + $a)) { $global:Latest.Item('ChecksumType' + $a) } else { 'sha256' }
                         $hash = (Get-FileHash $item -Algorithm $type | ForEach-Object Hash).ToLowerInvariant()
 
