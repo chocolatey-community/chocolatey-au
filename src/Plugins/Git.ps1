@@ -26,7 +26,10 @@ param(
     [string]$commitStrategy = 'single',
 
     # Branch name
-    [string]$Branch = 'master'
+    [string]$Branch = 'master',
+
+    # Overwrite the remote branch (with lease) instead of merging it; for topic branches rebuilt on every run
+    [switch] $ForcePush
 )
 
 [array]$packages = if ($Force) { $Info.result.updated } else { $Info.result.pushed }
@@ -68,8 +71,12 @@ if ($User -and $Password) {
 Write-Host "Checking out & resetting $Branch branch"
 git checkout -q -B $Branch
 
-Write-Host "Executing git pull"
-git pull -q origin $Branch
+if ($ForcePush) {
+    git fetch -q origin
+} else {
+    Write-Host "Executing git pull"
+    git pull -q origin $Branch
+}
 
 $gitAddArgs = @()
 if (-not $AddNew)
@@ -108,7 +115,11 @@ else {
 
 }
 Write-Host "Pushing changes"
-git push -q origin $Branch
+if ($ForcePush) {
+    git push -q --force-with-lease origin $Branch
+} else {
+    git push -q origin $Branch
+}
 if ($commitStrategy -eq 'atomictag') {
     write-host 'Atomic Tag Push'
     git push -q --tags

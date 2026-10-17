@@ -26,6 +26,7 @@ To set up plugin to create gist under your user name you need to give it your gi
 
 * To use it locally, just ensure `git push` doesn't require credentials and don't set any environment variables.
 * To use on build server such as [[AppVeyor]], specify `$Env:username` and `$Env:password`. If you host git repository on Github its preferable to use personal access token. You can use the same token as with gist as long as _**public repo**_ scope is activated.
+* Set `ForcePush` to fetch instead of pull and push with `--force-with-lease`. Use it when `Branch` is a topic branch that is rebuilt from the current checkout on every run.
 
 ## [GitLab](src/Plugins/GitLab.ps1)
 
