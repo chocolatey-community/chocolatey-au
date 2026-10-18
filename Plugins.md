@@ -1,7 +1,7 @@
 # Plugins
 
 
-[Gist](#gist)   [Git](#git)   [GitLab](#gitlab)   [GitReleases](#gitreleases)   [Gitter](#gitter)   [History](#history)   [Mail](#mail)  [PullRequest](#pullrequest) [Report](#report)   [RunInfo](#runinfo)   [Sleet](#sleet)   [Snippet](#snippet)
+[Gist](#gist)   [Git](#git)   [GitLab](#gitlab)   [GitReleases](#gitreleases)   [Gitter](#gitter)   [History](#history)   [Mail](#mail)  [PullRequest](#pullrequest) [PullRequestBitbucket](#pullrequestbitbucket) [Report](#report)   [RunInfo](#runinfo)   [Sleet](#sleet)   [Snippet](#snippet)
 
 ---
 
@@ -80,6 +80,13 @@ This plugin requires Git plugin and that clone is done with adequate depth.
 
 The plugin will open a GitHub pull request for the commits created by the Git plugin, which of course needs to run first.
 It has options to add assignees and reviewers to the created pull request and, supports on-prem GitHub Enterprise Server.
+
+## [PullRequestBitbucket](src/Plugins/PullRequestBitbucket.ps1)
+
+**Create Bitbucket Server pull request for the updated packages**.
+
+The plugin will open a Bitbucket Server / Data Center pull request for the commits created by the Git plugin, which of course needs to run first.
+Authenticates with an HTTP access token (`ApiKey`) and can add reviewers. `BaseUrl` is derived from an HTTPS origin remote when not specified.
 
 ## [Report](src/Plugins/Report.ps1)
 
