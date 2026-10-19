@@ -1,7 +1,7 @@
 # Plugins
 
 
-[Gist](#gist)   [Git](#git)   [GitLab](#gitlab)   [GitReleases](#gitreleases)   [Gitter](#gitter)   [History](#history)   [Mail](#mail)  [PullRequest](#pullrequest) [Report](#report)   [RunInfo](#runinfo)   [Sleet](#sleet)   [Snippet](#snippet)
+[Gist](#gist)   [Git](#git)   [GitLab](#gitlab)   [GitReleases](#gitreleases)   [Gitter](#gitter)   [History](#history)   [Mail](#mail)  [PullRequest](#pullrequest) [PullRequestBitbucket](#pullrequestbitbucket) [Report](#report)   [RunInfo](#runinfo)   [Sleet](#sleet)   [Snippet](#snippet)
 
 ---
 
@@ -26,6 +26,8 @@ To set up plugin to create gist under your user name you need to give it your gi
 
 * To use it locally, just ensure `git push` doesn't require credentials and don't set any environment variables.
 * To use on build server such as [[AppVeyor]], specify `$Env:username` and `$Env:password`. If you host git repository on Github its preferable to use personal access token. You can use the same token as with gist as long as _**public repo**_ scope is activated.
+* Set `ForcePush` to fetch instead of pull and push with `--force-with-lease`. Use it when `Branch` is a topic branch that is rebuilt from the current checkout on every run.
+* Set `BranchPerPackage` (with an `atomic` or `atomictag` commit strategy) to commit each package on its own `<Branch>-<package>` branch, force-pushed with a lease. Pair it with the same option on PullRequestBitbucket to get one pull request per package.
 
 ## [GitLab](src/Plugins/GitLab.ps1)
 
@@ -80,6 +82,16 @@ This plugin requires Git plugin and that clone is done with adequate depth.
 
 The plugin will open a GitHub pull request for the commits created by the Git plugin, which of course needs to run first.
 It has options to add assignees and reviewers to the created pull request and, supports on-prem GitHub Enterprise Server.
+Set `BranchPerPackage` to open one pull request per package from the `<Branch>-<package>` branches created by the Git plugin's `BranchPerPackage` option, and `Force` when the Git plugin also runs with `Force`.
+
+## [PullRequestBitbucket](src/Plugins/PullRequestBitbucket.ps1)
+
+**Create Bitbucket Server pull request for the updated packages**.
+
+The plugin will open a Bitbucket Server / Data Center pull request for the commits created by the Git plugin, which of course needs to run first.
+Authenticates with an HTTP access token (`ApiKey`) and can add reviewers. `BaseUrl` is derived from an HTTPS origin remote when not specified.
+By default one pull request is opened from `Branch` for all packages. Set `BranchPerPackage` to open one pull request per package from the `<Branch>-<package>` branches created by the Git plugin, and `Force` when the Git plugin also runs with `Force`.
+If a pull request is already open for a branch, its title and description are refreshed instead of failing.
 
 ## [Report](src/Plugins/Report.ps1)
 

@@ -5,12 +5,19 @@
 .DESCRIPTION
     This plugin will open a GitHub pull request for the commits created by the Git plugin, which of course needs to run first.
     It has options to add assignees and reviewers to the created pull request and, supports on-prem GitHub Enterprise Server.
+    It can also open one pull request per package from the branches created by the Git plugin's BranchPerPackage option.
 #>
 param(
     $Info,
 
-    # Git branch to create a GitHub pull request for
+    # Git branch to create a GitHub pull request for; the branch prefix when BranchPerPackage is set
     [string]$Branch,
+
+    # Open one pull request per package from the "<Branch>-<package>" branches
+    [switch]$BranchPerPackage,
+
+    # With BranchPerPackage, use updated packages instead of pushed ones; set it when the Git plugin runs with Force
+    [switch]$Force,
 
     # Target Git branch for the GitHub pull request
     [string]$BaseBranch = "master",
@@ -31,7 +38,8 @@ param(
     [string]$ApiKey
 )
 
-if ($Info.result.updated.Length -eq 0) { Write-Host "No package updated, skipping"; return }
+[array]$packages = if ($BranchPerPackage -and -not $Force) { $Info.result.pushed } else { $Info.result.updated }
+if ($packages.Length -eq 0) { Write-Host "No package updated, skipping"; return }
 
 $ErrorActionPreference = "Stop"
 
@@ -48,44 +56,65 @@ if ($PSVersionTable.PSVersion.major -ge 6) {
     [System.Net.ServicePointManager]::SecurityProtocol = 3072 -bor 768 -bor [System.Net.SecurityProtocolType]::Tls -bor [System.Net.SecurityProtocolType]::Ssl3
 }
 
-$data = @{
-    title = git log -1 --pretty="%s"
-    head = $Branch
-    base = $BaseBranch
-}
-$params = @{
-    ContentType = 'application/json'
-    Method = "POST"
-    Uri = "$GitHubAPI/repos/$owner/$repo/pulls"
-    Body = $data | ConvertTo-Json
-    UseBasicparsing = $true
-    Headers = @{
-        'Accept' = 'application/vnd.github.v3+json'
-        'Authorization' = ('Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($ApiKey)))
+$pullRequests = if ($BranchPerPackage) {
+    $packages | ForEach-Object {
+        @{
+            Branch = "$Branch-$($_.Name)"
+            Title  = "AU: $($_.Name) upgraded from $($_.NuspecVersion) to $($_.RemoteVersion)"
+        }
     }
-}
-$response = Invoke-WebRequest @params
-$jsonResponse = $response.Content | ConvertFrom-Json
-$prUrl = $jsonResponse.html_url
-$prNumber = $jsonResponse.number
-
-if ($Assignees) {
-    $data = @{
-        assignees = $Assignees
-    }
-    $params['Uri'] = "$GitHubAPI/repos/$owner/$repo/issues/$prNumber/assignees"
-    $params['Body'] = $data | ConvertTo-Json
-    $response = Invoke-WebRequest @params
+} else {
+    @{ Branch = $Branch; Title = git log -1 --pretty="%s" }
 }
 
-if ($Reviewers -or $TeamReviewers) {
-    $data = @{
-        reviewers = $Reviewers
-        team_reviewers = $TeamReviewers
+$failed = @()
+foreach ($pr in $pullRequests) {
+    try {
+        $data = @{
+            title = $pr.Title
+            head = $pr.Branch
+            base = $BaseBranch
+        }
+        $params = @{
+            ContentType = 'application/json'
+            Method = "POST"
+            Uri = "$GitHubAPI/repos/$owner/$repo/pulls"
+            Body = $data | ConvertTo-Json
+            UseBasicparsing = $true
+            Headers = @{
+                'Accept' = 'application/vnd.github.v3+json'
+                'Authorization' = ('Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($ApiKey)))
+            }
+        }
+        $response = Invoke-WebRequest @params
+        $jsonResponse = $response.Content | ConvertFrom-Json
+        $prUrl = $jsonResponse.html_url
+        $prNumber = $jsonResponse.number
+
+        if ($Assignees) {
+            $data = @{
+                assignees = $Assignees
+            }
+            $params['Uri'] = "$GitHubAPI/repos/$owner/$repo/issues/$prNumber/assignees"
+            $params['Body'] = $data | ConvertTo-Json
+            $response = Invoke-WebRequest @params
+        }
+
+        if ($Reviewers -or $TeamReviewers) {
+            $data = @{
+                reviewers = $Reviewers
+                team_reviewers = $TeamReviewers
+            }
+            $params['Uri'] = "$GitHubAPI/repos/$owner/$repo/pulls/$prNumber/requested_reviewers"
+            $params['Body'] = $data | ConvertTo-Json
+            $response = Invoke-WebRequest @params
+        }
+
+        Write-Host "Pull request sucessfully created: $prUrl"
+    } catch {
+        Write-Host "Failed to create pull request for $($pr.Branch): $_"
+        $failed += $pr.Branch
     }
-    $params['Uri'] = "$GitHubAPI/repos/$owner/$repo/pulls/$prNumber/requested_reviewers"
-    $params['Body'] = $data | ConvertTo-Json
-    $response = Invoke-WebRequest @params
 }
 
-Write-Host "Pull request sucessfully created: $prUrl"
+if ($failed) { throw "Pull request creation failed for: $($failed -join ', ')" }
